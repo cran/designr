@@ -95,7 +95,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 
 <h1 class="title toc-ignore">Vignette 1: From Design to Dataframe</h1>
 <h4 class="author">Maximilian M. Rabe &amp; Reinhold Kliegl</h4>
-<h4 class="date">2019-10-30 14:41:45</h4>
+<h4 class="date">2019-12-04 14:53:55</h4>
 
 
 <div id="TOC">
@@ -139,33 +139,33 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 codes1 &lt;-<span class="st"> </span><span class="kw">arrange</span>(<span class="kw">design.codes</span>(design1), Subj, Item)[<span class="kw">c</span>(<span class="dv">3</span>, <span class="dv">4</span>, <span class="dv">2</span>, <span class="dv">1</span>)]
 codes1</code></pre></div>
 <pre><code>## # A tibble: 216 x 4
-##    Subj  Item  Load  Speed 
-##    &lt;fct&gt; &lt;fct&gt; &lt;fct&gt; &lt;fct&gt; 
-##  1 Subj1 Item1 yes   slow  
-##  2 Subj1 Item1 yes   medium
-##  3 Subj1 Item1 yes   fast  
-##  4 Subj1 Item1 no    slow  
-##  5 Subj1 Item1 no    medium
-##  6 Subj1 Item1 no    fast  
-##  7 Subj1 Item2 yes   slow  
-##  8 Subj1 Item2 yes   medium
-##  9 Subj1 Item2 yes   fast  
-## 10 Subj1 Item2 no    slow  
+##    Speed  Load  Item  Subj 
+##    &lt;fct&gt;  &lt;fct&gt; &lt;fct&gt; &lt;fct&gt;
+##  1 slow   yes   Item1 Subj1
+##  2 medium yes   Item1 Subj1
+##  3 fast   yes   Item1 Subj1
+##  4 slow   no    Item1 Subj1
+##  5 medium no    Item1 Subj1
+##  6 fast   no    Item1 Subj1
+##  7 slow   yes   Item2 Subj1
+##  8 medium yes   Item2 Subj1
+##  9 fast   yes   Item2 Subj1
+## 10 slow   no    Item2 Subj1
 ## # … with 206 more rows</code></pre>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">tail</span>(codes1, <span class="dv">10</span>)</code></pre></div>
 <pre><code>## # A tibble: 10 x 4
-##    Subj  Item  Load  Speed 
-##    &lt;fct&gt; &lt;fct&gt; &lt;fct&gt; &lt;fct&gt; 
-##  1 Subj6 Item5 yes   fast  
-##  2 Subj6 Item5 no    slow  
-##  3 Subj6 Item5 no    medium
-##  4 Subj6 Item5 no    fast  
-##  5 Subj6 Item6 yes   slow  
-##  6 Subj6 Item6 yes   medium
-##  7 Subj6 Item6 yes   fast  
-##  8 Subj6 Item6 no    slow  
-##  9 Subj6 Item6 no    medium
-## 10 Subj6 Item6 no    fast</code></pre>
+##    Speed  Load  Item  Subj 
+##    &lt;fct&gt;  &lt;fct&gt; &lt;fct&gt; &lt;fct&gt;
+##  1 fast   yes   Item5 Subj6
+##  2 slow   no    Item5 Subj6
+##  3 medium no    Item5 Subj6
+##  4 fast   no    Item5 Subj6
+##  5 slow   yes   Item6 Subj6
+##  6 medium yes   Item6 Subj6
+##  7 fast   yes   Item6 Subj6
+##  8 slow   no    Item6 Subj6
+##  9 medium no    Item6 Subj6
+## 10 fast   no    Item6 Subj6</code></pre>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co">#xtabs( ~ Subj + Item + Load + Speed, codes1)</span>
 <span class="kw">xtabs</span>(<span class="op">~</span><span class="st"> </span>Load <span class="op">+</span><span class="st"> </span>Speed, codes1)</code></pre></div>
 <pre><code>##      Speed
@@ -255,18 +255,18 @@ codes1</code></pre></div>
 codes2 &lt;-<span class="st"> </span><span class="kw">arrange</span>(<span class="kw">design.codes</span>(design2), Subj, Item)[<span class="kw">c</span>(<span class="dv">3</span>, <span class="dv">4</span>, <span class="dv">1</span>, <span class="dv">2</span>)]
 codes2</code></pre></div>
 <pre><code>## # A tibble: 108 x 4
-##    Subj  Item  Type    Speed 
-##    &lt;fct&gt; &lt;fct&gt; &lt;fct&gt;   &lt;fct&gt; 
-##  1 Subj1 Item1 complex slow  
-##  2 Subj1 Item1 complex medium
-##  3 Subj1 Item1 complex fast  
-##  4 Subj1 Item2 complex slow  
-##  5 Subj1 Item2 complex medium
-##  6 Subj1 Item2 complex fast  
-##  7 Subj1 Item3 complex slow  
-##  8 Subj1 Item3 complex medium
-##  9 Subj1 Item3 complex fast  
-## 10 Subj1 Item4 simple  slow  
+##    Speed  Type    Subj  Item 
+##    &lt;fct&gt;  &lt;fct&gt;   &lt;fct&gt; &lt;fct&gt;
+##  1 slow   complex Subj1 Item1
+##  2 medium complex Subj1 Item1
+##  3 fast   complex Subj1 Item1
+##  4 slow   complex Subj1 Item2
+##  5 medium complex Subj1 Item2
+##  6 fast   complex Subj1 Item2
+##  7 slow   complex Subj1 Item3
+##  8 medium complex Subj1 Item3
+##  9 fast   complex Subj1 Item3
+## 10 slow   simple  Subj1 Item4
 ## # … with 98 more rows</code></pre>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">xtabs</span>(<span class="op">~</span><span class="st"> </span>Item <span class="op">+</span><span class="st"> </span>Type, codes2)</code></pre></div>
 <pre><code>##        Type
@@ -314,18 +314,18 @@ Type(2) x Speed(3) x 2 Item[Speed] x 6 Subj</code></pre>
 codes3 &lt;-<span class="st"> </span><span class="kw">arrange</span>(<span class="kw">design.codes</span>(design3), Subj, Item)[<span class="kw">c</span>(<span class="dv">4</span>, <span class="dv">3</span>, <span class="dv">2</span>, <span class="dv">1</span>)]
 codes3</code></pre></div>
 <pre><code>## # A tibble: 108 x 4
-##    Subj  Item  Speed  Age  
-##    &lt;fct&gt; &lt;fct&gt; &lt;fct&gt;  &lt;fct&gt;
-##  1 Subj1 Item1 slow   old  
-##  2 Subj1 Item1 medium old  
-##  3 Subj1 Item1 fast   old  
-##  4 Subj1 Item2 slow   old  
-##  5 Subj1 Item2 medium old  
-##  6 Subj1 Item2 fast   old  
-##  7 Subj1 Item3 slow   old  
-##  8 Subj1 Item3 medium old  
-##  9 Subj1 Item3 fast   old  
-## 10 Subj1 Item4 fast   old  
+##    Age   Speed  Subj  Item 
+##    &lt;fct&gt; &lt;fct&gt;  &lt;fct&gt; &lt;fct&gt;
+##  1 old   slow   Subj1 Item1
+##  2 old   medium Subj1 Item1
+##  3 old   fast   Subj1 Item1
+##  4 old   slow   Subj1 Item2
+##  5 old   medium Subj1 Item2
+##  6 old   fast   Subj1 Item2
+##  7 old   slow   Subj1 Item3
+##  8 old   medium Subj1 Item3
+##  9 old   fast   Subj1 Item3
+## 10 old   fast   Subj1 Item4
 ## # … with 98 more rows</code></pre>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">xtabs</span>(<span class="op">~</span><span class="st"> </span>Subj <span class="op">+</span><span class="st"> </span>Age, codes3)</code></pre></div>
 <pre><code>##        Age
@@ -368,18 +368,18 @@ codes3</code></pre></div>
 codes4 &lt;-<span class="st"> </span><span class="kw">arrange</span>(<span class="kw">design.codes</span>(design4), Subj, Item)[<span class="kw">c</span>(<span class="dv">3</span>, <span class="dv">4</span>, <span class="dv">2</span>, <span class="dv">1</span>)]
 codes4</code></pre></div>
 <pre><code>## # A tibble: 360 x 4
-##    Subj   Item  Age     Speed
-##    &lt;fct&gt;  &lt;fct&gt; &lt;fct&gt;   &lt;fct&gt;
-##  1 Subj01 Item1 complex fast 
-##  2 Subj01 Item2 complex fast 
-##  3 Subj01 Item3 complex fast 
-##  4 Subj01 Item4 complex fast 
-##  5 Subj01 Item5 complex fast 
-##  6 Subj01 Item6 complex fast 
-##  7 Subj02 Item1 complex fast 
-##  8 Subj02 Item2 complex fast 
-##  9 Subj02 Item3 complex fast 
-## 10 Subj02 Item4 complex fast 
+##    Speed Age     Item  Subj  
+##    &lt;fct&gt; &lt;fct&gt;   &lt;fct&gt; &lt;fct&gt; 
+##  1 fast  complex Item1 Subj01
+##  2 fast  complex Item2 Subj01
+##  3 fast  complex Item3 Subj01
+##  4 fast  complex Item4 Subj01
+##  5 fast  complex Item5 Subj01
+##  6 fast  complex Item6 Subj01
+##  7 fast  complex Item1 Subj02
+##  8 fast  complex Item2 Subj02
+##  9 fast  complex Item3 Subj02
+## 10 fast  complex Item4 Subj02
 ## # … with 350 more rows</code></pre>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">xtabs</span>( <span class="op">~</span><span class="st"> </span>Subj <span class="op">+</span><span class="st"> </span>Age, codes4)</code></pre></div>
 <pre><code>##         Age
@@ -549,18 +549,18 @@ codes4</code></pre></div>
 codes5 &lt;-<span class="st"> </span><span class="kw">arrange</span>(<span class="kw">design.codes</span>(design5), Subj, Item)[<span class="kw">c</span>(<span class="dv">3</span>, <span class="dv">4</span>, <span class="dv">1</span>, <span class="dv">2</span>)]
 codes5</code></pre></div>
 <pre><code>## # A tibble: 36 x 4
-##    Subj  Item  Speed  Load   
-##    &lt;fct&gt; &lt;fct&gt; &lt;fct&gt;  &lt;fct&gt;  
-##  1 Subj1 Item1 slow   simple 
-##  2 Subj1 Item2 slow   complex
-##  3 Subj1 Item3 medium simple 
-##  4 Subj1 Item4 medium complex
-##  5 Subj1 Item5 fast   simple 
-##  6 Subj1 Item6 fast   complex
-##  7 Subj2 Item1 slow   complex
-##  8 Subj2 Item2 medium simple 
-##  9 Subj2 Item3 medium complex
-## 10 Subj2 Item4 fast   simple 
+##    Speed  Load    Subj  Item 
+##    &lt;fct&gt;  &lt;fct&gt;   &lt;fct&gt; &lt;fct&gt;
+##  1 slow   simple  Subj1 Item1
+##  2 slow   complex Subj1 Item2
+##  3 medium simple  Subj1 Item3
+##  4 medium complex Subj1 Item4
+##  5 fast   simple  Subj1 Item5
+##  6 fast   complex Subj1 Item6
+##  7 slow   complex Subj2 Item1
+##  8 medium simple  Subj2 Item2
+##  9 medium complex Subj2 Item3
+## 10 fast   simple  Subj2 Item4
 ## # … with 26 more rows</code></pre>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">xtabs</span>(<span class="op">~</span><span class="st"> </span>Subj <span class="op">+</span><span class="st"> </span>Speed <span class="op">+</span><span class="st"> </span>Load, codes5)</code></pre></div>
 <pre><code>## , , Load = simple
@@ -689,18 +689,18 @@ codes5</code></pre></div>
 codes6 &lt;-<span class="st"> </span><span class="kw">arrange</span>(<span class="kw">design.codes</span>(design6), Subj, Item)[<span class="kw">c</span>(<span class="dv">3</span>, <span class="dv">4</span>, <span class="dv">1</span>, <span class="dv">2</span>)]
 codes6</code></pre></div>
 <pre><code>## # A tibble: 1,440 x 4
-##    Subj   Item   Speed  Load   
-##    &lt;fct&gt;  &lt;fct&gt;  &lt;fct&gt;  &lt;fct&gt;  
-##  1 Subj01 Item01 slow   simple 
-##  2 Subj01 Item02 slow   complex
-##  3 Subj01 Item03 medium simple 
-##  4 Subj01 Item04 medium complex
-##  5 Subj01 Item05 fast   simple 
-##  6 Subj01 Item06 fast   complex
-##  7 Subj01 Item07 slow   simple 
-##  8 Subj01 Item08 slow   complex
-##  9 Subj01 Item09 medium simple 
-## 10 Subj01 Item10 medium complex
+##    Speed  Load    Subj   Item  
+##    &lt;fct&gt;  &lt;fct&gt;   &lt;fct&gt;  &lt;fct&gt; 
+##  1 slow   simple  Subj01 Item01
+##  2 slow   complex Subj01 Item02
+##  3 medium simple  Subj01 Item03
+##  4 medium complex Subj01 Item04
+##  5 fast   simple  Subj01 Item05
+##  6 fast   complex Subj01 Item06
+##  7 slow   simple  Subj01 Item07
+##  8 slow   complex Subj01 Item08
+##  9 medium simple  Subj01 Item09
+## 10 medium complex Subj01 Item10
 ## # … with 1,430 more rows</code></pre>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">length</span>(<span class="kw">unique</span>(codes6<span class="op">$</span>Subj))</code></pre></div>
 <pre><code>## [1] 60</code></pre>
@@ -743,24 +743,16 @@ codes6</code></pre></div>
 ## [1] stats     graphics  grDevices utils     datasets  methods   base     
 ## 
 ## other attached packages:
-##  [1] designr_0.1.8   forcats_0.4.0   stringr_1.4.0   dplyr_0.8.3    
-##  [5] purrr_0.3.2     readr_1.3.1     tidyr_1.0.0     tibble_2.1.3   
-##  [9] ggplot2_3.2.1   tidyverse_1.2.1
+## [1] designr_0.1.9 dplyr_0.8.3  
 ## 
 ## loaded via a namespace (and not attached):
-##  [1] Rcpp_1.0.2       cellranger_1.1.0 pillar_1.4.2     compiler_3.5.1  
-##  [5] tools_3.5.1      zeallot_0.1.0    digest_0.6.21    lubridate_1.7.4 
-##  [9] jsonlite_1.6     evaluate_0.14    lifecycle_0.1.0  nlme_3.1-141    
-## [13] gtable_0.3.0     lattice_0.20-38  pkgconfig_2.0.3  rlang_0.4.0     
-## [17] cli_1.1.0        rstudioapi_0.10  yaml_2.2.0       haven_2.1.1     
-## [21] xfun_0.10        withr_2.1.2      xml2_1.2.2       httr_1.4.1      
-## [25] knitr_1.25       hms_0.5.1        generics_0.0.2   vctrs_0.2.0     
-## [29] grid_3.5.1       tidyselect_0.2.5 glue_1.3.1       R6_2.4.0        
-## [33] fansi_0.4.0      readxl_1.3.1     rmarkdown_1.16   modelr_0.1.5    
-## [37] magrittr_1.5     backports_1.1.5  scales_1.0.0     htmltools_0.3.6 
-## [41] rvest_0.3.4      assertthat_0.2.1 colorspace_1.4-1 utf8_1.1.4      
-## [45] stringi_1.4.3    lazyeval_0.2.2   munsell_0.5.0    broom_0.5.2     
-## [49] crayon_1.3.4</code></pre>
+##  [1] Rcpp_1.0.2       fansi_0.4.0      utf8_1.1.4       crayon_1.3.4    
+##  [5] digest_0.6.21    assertthat_0.2.1 R6_2.4.0         magrittr_1.5    
+##  [9] evaluate_0.14    pillar_1.4.2     cli_1.1.0        rlang_0.4.0     
+## [13] stringi_1.4.3    rmarkdown_1.16   tools_3.5.1      stringr_1.4.0   
+## [17] glue_1.3.1       purrr_0.3.2      xfun_0.10        yaml_2.2.0      
+## [21] compiler_3.5.1   pkgconfig_2.0.3  htmltools_0.3.6  tidyselect_0.2.5
+## [25] knitr_1.25       tibble_2.1.3</code></pre>
 </div>
 </div>
 
