@@ -1,4 +1,4 @@
-## ----setup, include=FALSE------------------------------------------------
+## ----setup, include=FALSE-----------------------------------------------------
 knitr::opts_chunk$set(echo = TRUE)
 
 library(dplyr)
@@ -7,7 +7,7 @@ library(designr)
 # Set a "seed" for the random numnber generator
 set.seed(12345)  
 
-## ------------------------------------------------------------------------
+## -----------------------------------------------------------------------------
 design1 <- 
   fixed.factor("Speed", levels=c("slow", "medium", "fast")) +
   fixed.factor("Load",  levels=c("yes", "no")) +
@@ -24,7 +24,7 @@ xtabs(~ Load + Speed, codes1)
 xtabs(~ Subj + Load + Speed, codes1)
 xtabs(~ Item + Load + Speed, codes1)
 
-## ------------------------------------------------------------------------
+## -----------------------------------------------------------------------------
 design2 <- fixed.factor("Speed", levels=c("slow", "medium", "fast")) +
   fixed.factor("Type",  levels=c("simple", "complex")) +
   random.factor("Subj", instances=6) +   
@@ -41,7 +41,7 @@ xtabs(~ Subj + Type, codes2)
 #xtabs(~ Subj + Type + Speed, codes2)
 #xtabs(~ Item + Type + Speed, codes2)
 
-## ------------------------------------------------------------------------
+## -----------------------------------------------------------------------------
 design3 <- 
   fixed.factor("Speed", levels=c("slow", "medium", "fast")) +
   fixed.factor("Age",  levels=c("young", "old")) +
@@ -57,7 +57,7 @@ xtabs(~ Item + Age, codes3)
 #xtabs( ~ Subj + Item + Age + Speed, codes3)
 #xtabs( ~ Subj + Age + Speed, codes3)
 
-## ------------------------------------------------------------------------
+## -----------------------------------------------------------------------------
 design4 <- 
   fixed.factor("Speed", levels=c("slow", "medium", "fast")) +
   fixed.factor("Age",  levels=c("simple", "complex")) +
@@ -74,7 +74,7 @@ xtabs( ~ Item + Speed, codes4)
 
 #xtabs( ~ Subj + Item + Age + Speed, codes4)
 
-## ------------------------------------------------------------------------
+## -----------------------------------------------------------------------------
 design5 <- 
   fixed.factor("Speed", levels=c("slow", "medium", "fast")) +
   fixed.factor("Load",  levels=c("simple", "complex")) +
@@ -91,7 +91,7 @@ xtabs(~ Item + Speed + Load, codes5)
 
 xtabs( ~ Subj + Item + Load + Speed, codes1)
 
-## ------------------------------------------------------------------------
+## -----------------------------------------------------------------------------
 design6 <- 
   fixed.factor("Speed", levels=c("slow", "medium", "fast")) +
   fixed.factor("Load",  levels=c("simple", "complex")) +
@@ -106,6 +106,6 @@ length(unique(codes6$Subj))
 length(unique(codes6$Item))
 length(unique(paste(codes6$Subj, codes6$Item)))
 
-## ------------------------------------------------------------------------
+## -----------------------------------------------------------------------------
 sessionInfo()
 

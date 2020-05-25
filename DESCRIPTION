@@ -1,7 +1,7 @@
 Package: designr
 Type: Package
 Title: Balanced Factorial Designs
-Version: 0.1.9
+Version: 0.1.10
 URL: https://maxrabe.com/designr
 BugReports: https://github.com/mmrabe/designr/issues
 Authors@R: c(person("Maximilian", "Rabe", email = "maximilian.rabe@uni-potsdam.de", role = c("aut", "cre")), person("Reinhold", "Kliegl", email = "kliegl@uni-potsdam.de", role = c("aut")), person("Schad", "Daniel", email = "schad@uni-potsdam.de", role = c("aut")))
@@ -9,15 +9,15 @@ Description: Generate balanced factorial designs with crossed and nested random 
 License: GPL-3
 Encoding: UTF-8
 LazyData: true
-RoxygenNote: 6.1.1
+RoxygenNote: 7.1.0
 Imports: MASS, tibble, crossdes, methods, dplyr
 Suggests: knitr, rmarkdown, jsonlite, writexl
 VignetteBuilder: knitr
 NeedsCompilation: no
-Packaged: 2019-12-04 13:53:56 UTC; max
+Packaged: 2020-05-25 10:39:02 UTC; max
 Author: Maximilian Rabe [aut, cre],
   Reinhold Kliegl [aut],
   Schad Daniel [aut]
 Maintainer: Maximilian Rabe <maximilian.rabe@uni-potsdam.de>
 Repository: CRAN
-Date/Publication: 2019-12-04 14:30:02 UTC
+Date/Publication: 2020-05-25 11:00:02 UTC
