@@ -1,9 +1,56 @@
+#' designr
+#' 
+#' designr is an R package to create and simulate crossed factorial designs.
+#' 
+#' The package supports factorial designs with an arbitrary number of fixed and random factors. Fixed factors are factors for which levels are known and typically defined by the experimenter, e.g. an experimental condition or a quasi-experimental variable such as a subject’s age group. Conversely, the instances of random factors are usually not known before data collection. Examples for random factors are subjects or items in a typical psychological experiment, with the individual tested subjects and used items being the instances of those random factors.
+#' 
+#' @name designr
+#' @rdname designr
+#' @seealso \code{\link[designr]{fixed.factor}}, \code{\link[designr]{random.factor}}, \code{\link[designr]{design.codes}}
+#' @examples 
+#' # A fixed-effects design without repeated measurement is created as easily as this:
+#'   
+#' design1 <- 
+#'   fixed.factor("Age", levels=c("young", "old")) +
+#'   fixed.factor("Material",  levels=c("word", "image"))
+#' design1
+#' 
+#' # As can be seen, this experimental design requires 4 observations.
+#' 
+#' # Adding random factors
+#' # Assume we want to test different groups of subjects. Each subject will only be `old` or `young` 
+#' # but be tested with stimuli of both categories `word` and `image`. In a typical behavioral
+#' # experiment, `Age` would now be a between-subject/within-item factor and `Material` a
+#' # within-subject/between-item factor. In other words, `Material` is now nested within the
+#' # instances of `Subject`, whereas `Subject` is grouped by `Age`.
+#' 
+#' design2 <- 
+#'   fixed.factor("Age", levels=c("young", "old")) +
+#'   fixed.factor("Material",  levels=c("word", "image")) +
+#'   random.factor("Subject", groups = "Age")
+#' design.codes(design2)
+#' 
+#' # The minimal experimental design will still require 4 observations, assigning one subject to each
+#' # level of the between-subject factor `Age`.
+#' 
+NULL
 
+
+
+#' Gibson & Wu (2013)
+#' 
+#' The dataset \code{gibsonwu2013} contains data from self-paced reading in Chinese, comparing the processing of subject-extracted relative clauses (SRCs) and object-extracted relative clauses (ORCs) in supportive contexts.
+#'
+#' @name gibsonwu2013
+#' @docType data
+#' @references Gibson, E., & Wu, H.-H. I. (2013). Processing Chinese relative clauses in context. \emph{Language and Cognitive Processes, 28}, 125–155. \doi{10.1080/01690965.2010.536656}
+#' @keywords data
+NULL
 
 # general tools
 
 
-check_argument <- function(val, ...) {
+.check_argument <- function(val, ...) {
   val <- tryCatch(val, error = function(e) e)
   if(is(val, "error")) stop(val$message, call. = FALSE)
   argname <- as.character(as.expression(match.call()$val))

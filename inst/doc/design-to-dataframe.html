@@ -12,48 +12,109 @@
 
 <meta name="author" content="Maximilian M. Rabe &amp; Reinhold Kliegl" />
 
+<meta name="date" content="2019-09-28" />
 
-<title>Vignette 1: From Design to Dataframe</title>
+<title>From Design to Dataframe</title>
+
+<script>// Hide empty <a> tag within highlighted CodeBlock for screen reader accessibility (see https://github.com/jgm/pandoc/issues/6352#issuecomment-626106786) -->
+// v0.0.1
+// Written by JooYoung Seo (jooyoung@psu.edu) and Atsushi Yasumoto on June 1st, 2020.
+
+document.addEventListener('DOMContentLoaded', function() {
+  const codeList = document.getElementsByClassName("sourceCode");
+  for (var i = 0; i < codeList.length; i++) {
+    var linkList = codeList[i].getElementsByTagName('a');
+    for (var j = 0; j < linkList.length; j++) {
+      if (linkList[j].innerHTML === "") {
+        linkList[j].setAttribute('aria-hidden', 'true');
+      }
+    }
+  }
+});
+</script>
+
+<style type="text/css">
+  code{white-space: pre-wrap;}
+  span.smallcaps{font-variant: small-caps;}
+  span.underline{text-decoration: underline;}
+  div.column{display: inline-block; vertical-align: top; width: 50%;}
+  div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+  ul.task-list{list-style: none;}
+    </style>
 
 
-
-<style type="text/css">code{white-space: pre;}</style>
+<style type="text/css">
+  code {
+    white-space: pre;
+  }
+  .sourceCode {
+    overflow: visible;
+  }
+</style>
 <style type="text/css" data-origin="pandoc">
-div.sourceCode { overflow-x: auto; }
-table.sourceCode, tr.sourceCode, td.lineNumbers, td.sourceCode {
-  margin: 0; padding: 0; vertical-align: baseline; border: none; }
-table.sourceCode { width: 100%; line-height: 100%; }
-td.lineNumbers { text-align: right; padding-right: 4px; padding-left: 4px; color: #aaaaaa; border-right: 1px solid #aaaaaa; }
-td.sourceCode { padding-left: 5px; }
-code > span.kw { color: #007020; font-weight: bold; } /* Keyword */
-code > span.dt { color: #902000; } /* DataType */
-code > span.dv { color: #40a070; } /* DecVal */
-code > span.bn { color: #40a070; } /* BaseN */
-code > span.fl { color: #40a070; } /* Float */
-code > span.ch { color: #4070a0; } /* Char */
-code > span.st { color: #4070a0; } /* String */
-code > span.co { color: #60a0b0; font-style: italic; } /* Comment */
-code > span.ot { color: #007020; } /* Other */
-code > span.al { color: #ff0000; font-weight: bold; } /* Alert */
-code > span.fu { color: #06287e; } /* Function */
-code > span.er { color: #ff0000; font-weight: bold; } /* Error */
-code > span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
-code > span.cn { color: #880000; } /* Constant */
-code > span.sc { color: #4070a0; } /* SpecialChar */
-code > span.vs { color: #4070a0; } /* VerbatimString */
-code > span.ss { color: #bb6688; } /* SpecialString */
-code > span.im { } /* Import */
-code > span.va { color: #19177c; } /* Variable */
-code > span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
-code > span.op { color: #666666; } /* Operator */
-code > span.bu { } /* BuiltIn */
-code > span.ex { } /* Extension */
-code > span.pp { color: #bc7a00; } /* Preprocessor */
-code > span.at { color: #7d9029; } /* Attribute */
-code > span.do { color: #ba2121; font-style: italic; } /* Documentation */
-code > span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
-code > span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
-code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code.sourceCode > span { display: inline-block; line-height: 1.25; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode { white-space: pre; position: relative; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+code.sourceCode { white-space: pre-wrap; }
+code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
 
 </style>
 <script>
@@ -80,7 +141,188 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 
 
 
-<link href="data:text/css;charset=utf-8,body%20%7B%0Abackground%2Dcolor%3A%20%23fff%3B%0Amargin%3A%201em%20auto%3B%0Amax%2Dwidth%3A%20700px%3B%0Aoverflow%3A%20visible%3B%0Apadding%2Dleft%3A%202em%3B%0Apadding%2Dright%3A%202em%3B%0Afont%2Dfamily%3A%20%22Open%20Sans%22%2C%20%22Helvetica%20Neue%22%2C%20Helvetica%2C%20Arial%2C%20sans%2Dserif%3B%0Afont%2Dsize%3A%2014px%3B%0Aline%2Dheight%3A%201%2E35%3B%0A%7D%0A%23TOC%20%7B%0Aclear%3A%20both%3B%0Amargin%3A%200%200%2010px%2010px%3B%0Apadding%3A%204px%3B%0Awidth%3A%20400px%3B%0Aborder%3A%201px%20solid%20%23CCCCCC%3B%0Aborder%2Dradius%3A%205px%3B%0Abackground%2Dcolor%3A%20%23f6f6f6%3B%0Afont%2Dsize%3A%2013px%3B%0Aline%2Dheight%3A%201%2E3%3B%0A%7D%0A%23TOC%20%2Etoctitle%20%7B%0Afont%2Dweight%3A%20bold%3B%0Afont%2Dsize%3A%2015px%3B%0Amargin%2Dleft%3A%205px%3B%0A%7D%0A%23TOC%20ul%20%7B%0Apadding%2Dleft%3A%2040px%3B%0Amargin%2Dleft%3A%20%2D1%2E5em%3B%0Amargin%2Dtop%3A%205px%3B%0Amargin%2Dbottom%3A%205px%3B%0A%7D%0A%23TOC%20ul%20ul%20%7B%0Amargin%2Dleft%3A%20%2D2em%3B%0A%7D%0A%23TOC%20li%20%7B%0Aline%2Dheight%3A%2016px%3B%0A%7D%0Atable%20%7B%0Amargin%3A%201em%20auto%3B%0Aborder%2Dwidth%3A%201px%3B%0Aborder%2Dcolor%3A%20%23DDDDDD%3B%0Aborder%2Dstyle%3A%20outset%3B%0Aborder%2Dcollapse%3A%20collapse%3B%0A%7D%0Atable%20th%20%7B%0Aborder%2Dwidth%3A%202px%3B%0Apadding%3A%205px%3B%0Aborder%2Dstyle%3A%20inset%3B%0A%7D%0Atable%20td%20%7B%0Aborder%2Dwidth%3A%201px%3B%0Aborder%2Dstyle%3A%20inset%3B%0Aline%2Dheight%3A%2018px%3B%0Apadding%3A%205px%205px%3B%0A%7D%0Atable%2C%20table%20th%2C%20table%20td%20%7B%0Aborder%2Dleft%2Dstyle%3A%20none%3B%0Aborder%2Dright%2Dstyle%3A%20none%3B%0A%7D%0Atable%20thead%2C%20table%20tr%2Eeven%20%7B%0Abackground%2Dcolor%3A%20%23f7f7f7%3B%0A%7D%0Ap%20%7B%0Amargin%3A%200%2E5em%200%3B%0A%7D%0Ablockquote%20%7B%0Abackground%2Dcolor%3A%20%23f6f6f6%3B%0Apadding%3A%200%2E25em%200%2E75em%3B%0A%7D%0Ahr%20%7B%0Aborder%2Dstyle%3A%20solid%3B%0Aborder%3A%20none%3B%0Aborder%2Dtop%3A%201px%20solid%20%23777%3B%0Amargin%3A%2028px%200%3B%0A%7D%0Adl%20%7B%0Amargin%2Dleft%3A%200%3B%0A%7D%0Adl%20dd%20%7B%0Amargin%2Dbottom%3A%2013px%3B%0Amargin%2Dleft%3A%2013px%3B%0A%7D%0Adl%20dt%20%7B%0Afont%2Dweight%3A%20bold%3B%0A%7D%0Aul%20%7B%0Amargin%2Dtop%3A%200%3B%0A%7D%0Aul%20li%20%7B%0Alist%2Dstyle%3A%20circle%20outside%3B%0A%7D%0Aul%20ul%20%7B%0Amargin%2Dbottom%3A%200%3B%0A%7D%0Apre%2C%20code%20%7B%0Abackground%2Dcolor%3A%20%23f7f7f7%3B%0Aborder%2Dradius%3A%203px%3B%0Acolor%3A%20%23333%3B%0Awhite%2Dspace%3A%20pre%2Dwrap%3B%20%0A%7D%0Apre%20%7B%0Aborder%2Dradius%3A%203px%3B%0Amargin%3A%205px%200px%2010px%200px%3B%0Apadding%3A%2010px%3B%0A%7D%0Apre%3Anot%28%5Bclass%5D%29%20%7B%0Abackground%2Dcolor%3A%20%23f7f7f7%3B%0A%7D%0Acode%20%7B%0Afont%2Dfamily%3A%20Consolas%2C%20Monaco%2C%20%27Courier%20New%27%2C%20monospace%3B%0Afont%2Dsize%3A%2085%25%3B%0A%7D%0Ap%20%3E%20code%2C%20li%20%3E%20code%20%7B%0Apadding%3A%202px%200px%3B%0A%7D%0Adiv%2Efigure%20%7B%0Atext%2Dalign%3A%20center%3B%0A%7D%0Aimg%20%7B%0Abackground%2Dcolor%3A%20%23FFFFFF%3B%0Apadding%3A%202px%3B%0Aborder%3A%201px%20solid%20%23DDDDDD%3B%0Aborder%2Dradius%3A%203px%3B%0Aborder%3A%201px%20solid%20%23CCCCCC%3B%0Amargin%3A%200%205px%3B%0A%7D%0Ah1%20%7B%0Amargin%2Dtop%3A%200%3B%0Afont%2Dsize%3A%2035px%3B%0Aline%2Dheight%3A%2040px%3B%0A%7D%0Ah2%20%7B%0Aborder%2Dbottom%3A%204px%20solid%20%23f7f7f7%3B%0Apadding%2Dtop%3A%2010px%3B%0Apadding%2Dbottom%3A%202px%3B%0Afont%2Dsize%3A%20145%25%3B%0A%7D%0Ah3%20%7B%0Aborder%2Dbottom%3A%202px%20solid%20%23f7f7f7%3B%0Apadding%2Dtop%3A%2010px%3B%0Afont%2Dsize%3A%20120%25%3B%0A%7D%0Ah4%20%7B%0Aborder%2Dbottom%3A%201px%20solid%20%23f7f7f7%3B%0Amargin%2Dleft%3A%208px%3B%0Afont%2Dsize%3A%20105%25%3B%0A%7D%0Ah5%2C%20h6%20%7B%0Aborder%2Dbottom%3A%201px%20solid%20%23ccc%3B%0Afont%2Dsize%3A%20105%25%3B%0A%7D%0Aa%20%7B%0Acolor%3A%20%230033dd%3B%0Atext%2Ddecoration%3A%20none%3B%0A%7D%0Aa%3Ahover%20%7B%0Acolor%3A%20%236666ff%3B%20%7D%0Aa%3Avisited%20%7B%0Acolor%3A%20%23800080%3B%20%7D%0Aa%3Avisited%3Ahover%20%7B%0Acolor%3A%20%23BB00BB%3B%20%7D%0Aa%5Bhref%5E%3D%22http%3A%22%5D%20%7B%0Atext%2Ddecoration%3A%20underline%3B%20%7D%0Aa%5Bhref%5E%3D%22https%3A%22%5D%20%7B%0Atext%2Ddecoration%3A%20underline%3B%20%7D%0A%0Acode%20%3E%20span%2Ekw%20%7B%20color%3A%20%23555%3B%20font%2Dweight%3A%20bold%3B%20%7D%20%0Acode%20%3E%20span%2Edt%20%7B%20color%3A%20%23902000%3B%20%7D%20%0Acode%20%3E%20span%2Edv%20%7B%20color%3A%20%2340a070%3B%20%7D%20%0Acode%20%3E%20span%2Ebn%20%7B%20color%3A%20%23d14%3B%20%7D%20%0Acode%20%3E%20span%2Efl%20%7B%20color%3A%20%23d14%3B%20%7D%20%0Acode%20%3E%20span%2Ech%20%7B%20color%3A%20%23d14%3B%20%7D%20%0Acode%20%3E%20span%2Est%20%7B%20color%3A%20%23d14%3B%20%7D%20%0Acode%20%3E%20span%2Eco%20%7B%20color%3A%20%23888888%3B%20font%2Dstyle%3A%20italic%3B%20%7D%20%0Acode%20%3E%20span%2Eot%20%7B%20color%3A%20%23007020%3B%20%7D%20%0Acode%20%3E%20span%2Eal%20%7B%20color%3A%20%23ff0000%3B%20font%2Dweight%3A%20bold%3B%20%7D%20%0Acode%20%3E%20span%2Efu%20%7B%20color%3A%20%23900%3B%20font%2Dweight%3A%20bold%3B%20%7D%20%0Acode%20%3E%20span%2Eer%20%7B%20color%3A%20%23a61717%3B%20background%2Dcolor%3A%20%23e3d2d2%3B%20%7D%20%0A" rel="stylesheet" type="text/css" />
+
+<style type="text/css">body {
+background-color: #fff;
+margin: 1em auto;
+max-width: 700px;
+overflow: visible;
+padding-left: 2em;
+padding-right: 2em;
+font-family: "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
+font-size: 14px;
+line-height: 1.35;
+}
+#TOC {
+clear: both;
+margin: 0 0 10px 10px;
+padding: 4px;
+width: 400px;
+border: 1px solid #CCCCCC;
+border-radius: 5px;
+background-color: #f6f6f6;
+font-size: 13px;
+line-height: 1.3;
+}
+#TOC .toctitle {
+font-weight: bold;
+font-size: 15px;
+margin-left: 5px;
+}
+#TOC ul {
+padding-left: 40px;
+margin-left: -1.5em;
+margin-top: 5px;
+margin-bottom: 5px;
+}
+#TOC ul ul {
+margin-left: -2em;
+}
+#TOC li {
+line-height: 16px;
+}
+table {
+margin: 1em auto;
+border-width: 1px;
+border-color: #DDDDDD;
+border-style: outset;
+border-collapse: collapse;
+}
+table th {
+border-width: 2px;
+padding: 5px;
+border-style: inset;
+}
+table td {
+border-width: 1px;
+border-style: inset;
+line-height: 18px;
+padding: 5px 5px;
+}
+table, table th, table td {
+border-left-style: none;
+border-right-style: none;
+}
+table thead, table tr.even {
+background-color: #f7f7f7;
+}
+p {
+margin: 0.5em 0;
+}
+blockquote {
+background-color: #f6f6f6;
+padding: 0.25em 0.75em;
+}
+hr {
+border-style: solid;
+border: none;
+border-top: 1px solid #777;
+margin: 28px 0;
+}
+dl {
+margin-left: 0;
+}
+dl dd {
+margin-bottom: 13px;
+margin-left: 13px;
+}
+dl dt {
+font-weight: bold;
+}
+ul {
+margin-top: 0;
+}
+ul li {
+list-style: circle outside;
+}
+ul ul {
+margin-bottom: 0;
+}
+pre, code {
+background-color: #f7f7f7;
+border-radius: 3px;
+color: #333;
+white-space: pre-wrap; 
+}
+pre {
+border-radius: 3px;
+margin: 5px 0px 10px 0px;
+padding: 10px;
+}
+pre:not([class]) {
+background-color: #f7f7f7;
+}
+code {
+font-family: Consolas, Monaco, 'Courier New', monospace;
+font-size: 85%;
+}
+p > code, li > code {
+padding: 2px 0px;
+}
+div.figure {
+text-align: center;
+}
+img {
+background-color: #FFFFFF;
+padding: 2px;
+border: 1px solid #DDDDDD;
+border-radius: 3px;
+border: 1px solid #CCCCCC;
+margin: 0 5px;
+}
+h1 {
+margin-top: 0;
+font-size: 35px;
+line-height: 40px;
+}
+h2 {
+border-bottom: 4px solid #f7f7f7;
+padding-top: 10px;
+padding-bottom: 2px;
+font-size: 145%;
+}
+h3 {
+border-bottom: 2px solid #f7f7f7;
+padding-top: 10px;
+font-size: 120%;
+}
+h4 {
+border-bottom: 1px solid #f7f7f7;
+margin-left: 8px;
+font-size: 105%;
+}
+h5, h6 {
+border-bottom: 1px solid #ccc;
+font-size: 105%;
+}
+a {
+color: #0033dd;
+text-decoration: none;
+}
+a:hover {
+color: #6666ff; }
+a:visited {
+color: #800080; }
+a:visited:hover {
+color: #BB00BB; }
+a[href^="http:"] {
+text-decoration: underline; }
+a[href^="https:"] {
+text-decoration: underline; }
+
+code > span.kw { color: #555; font-weight: bold; } 
+code > span.dt { color: #902000; } 
+code > span.dv { color: #40a070; } 
+code > span.bn { color: #d14; } 
+code > span.fl { color: #d14; } 
+code > span.ch { color: #d14; } 
+code > span.st { color: #d14; } 
+code > span.co { color: #888888; font-style: italic; } 
+code > span.ot { color: #007020; } 
+code > span.al { color: #ff0000; font-weight: bold; } 
+code > span.fu { color: #900; font-weight: bold; } 
+code > span.er { color: #a61717; background-color: #e3d2d2; } 
+</style>
 
 
 
@@ -92,9 +334,9 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 
 
 
-<h1 class="title toc-ignore">Vignette 1: From Design to Dataframe</h1>
+<h1 class="title toc-ignore">From Design to Dataframe</h1>
 <h4 class="author">Maximilian M. Rabe &amp; Reinhold Kliegl</h4>
-<h4 class="date">2020-05-25 12:39:01</h4>
+<h4 class="date">2019-09-28</h4>
 
 
 <div id="TOC">
@@ -128,15 +370,15 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <p>In the first version of the experimental design, each subject sees each text in each of 2 x 3 experimental conditions. Thus, the two fixed factors <em>Speed</em> and <em>Load</em> are both within-subject and within-item. A minimum of six subjects and six texts is required for a complete within-subject/within-item design. We summarize the design with the <strong>design formula:</strong></p>
 <pre><code>Load(2) x Speed(3) x 6 Item x 6 Subj</code></pre>
 <p>This is a completely crossed design. Note the difference between specification of levels for fixed and instances for random factors. The product of numbers in the formula informs about the number of observations generated by the design. In this case: <strong>216 observations</strong>.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">design1 &lt;-<span class="st"> </span>
-<span class="st">  </span><span class="kw">fixed.factor</span>(<span class="st">&quot;Speed&quot;</span>, <span class="dt">levels=</span><span class="kw">c</span>(<span class="st">&quot;slow&quot;</span>, <span class="st">&quot;medium&quot;</span>, <span class="st">&quot;fast&quot;</span>)) <span class="op">+</span>
-<span class="st">  </span><span class="kw">fixed.factor</span>(<span class="st">&quot;Load&quot;</span>,  <span class="dt">levels=</span><span class="kw">c</span>(<span class="st">&quot;yes&quot;</span>, <span class="st">&quot;no&quot;</span>)) <span class="op">+</span>
-<span class="st">  </span><span class="kw">random.factor</span>(<span class="st">&quot;Subj&quot;</span>, <span class="dt">instances=</span><span class="dv">6</span>) <span class="op">+</span><span class="st">    </span>
-<span class="st">  </span><span class="kw">random.factor</span>(<span class="st">&quot;Item&quot;</span>, <span class="dt">instances=</span><span class="dv">6</span>)    
-
-
-codes1 &lt;-<span class="st"> </span><span class="kw">arrange</span>(<span class="kw">design.codes</span>(design1), Subj, Item)[<span class="kw">c</span>(<span class="dv">3</span>, <span class="dv">4</span>, <span class="dv">2</span>, <span class="dv">1</span>)]
-codes1</code></pre></div>
+<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1"></a>design1 &lt;-<span class="st"> </span></span>
+<span id="cb2-2"><a href="#cb2-2"></a><span class="st">  </span><span class="kw">fixed.factor</span>(<span class="st">&quot;Speed&quot;</span>, <span class="dt">levels=</span><span class="kw">c</span>(<span class="st">&quot;slow&quot;</span>, <span class="st">&quot;medium&quot;</span>, <span class="st">&quot;fast&quot;</span>)) <span class="op">+</span></span>
+<span id="cb2-3"><a href="#cb2-3"></a><span class="st">  </span><span class="kw">fixed.factor</span>(<span class="st">&quot;Load&quot;</span>,  <span class="dt">levels=</span><span class="kw">c</span>(<span class="st">&quot;yes&quot;</span>, <span class="st">&quot;no&quot;</span>)) <span class="op">+</span></span>
+<span id="cb2-4"><a href="#cb2-4"></a><span class="st">  </span><span class="kw">random.factor</span>(<span class="st">&quot;Subj&quot;</span>, <span class="dt">instances=</span><span class="dv">6</span>) <span class="op">+</span><span class="st">    </span></span>
+<span id="cb2-5"><a href="#cb2-5"></a><span class="st">  </span><span class="kw">random.factor</span>(<span class="st">&quot;Item&quot;</span>, <span class="dt">instances=</span><span class="dv">6</span>)    </span>
+<span id="cb2-6"><a href="#cb2-6"></a></span>
+<span id="cb2-7"><a href="#cb2-7"></a></span>
+<span id="cb2-8"><a href="#cb2-8"></a>codes1 &lt;-<span class="st"> </span><span class="kw">arrange</span>(<span class="kw">design.codes</span>(design1), Subj, Item)[<span class="kw">c</span>(<span class="dv">3</span>, <span class="dv">4</span>, <span class="dv">2</span>, <span class="dv">1</span>)]</span>
+<span id="cb2-9"><a href="#cb2-9"></a>codes1</span></code></pre></div>
 <pre><code>## # A tibble: 216 x 4
 ##    Speed  Load  Item  Subj 
 ##    &lt;fct&gt;  &lt;fct&gt; &lt;fct&gt; &lt;fct&gt;
@@ -151,7 +393,7 @@ codes1</code></pre></div>
 ##  9 fast   yes   Item2 Subj1
 ## 10 slow   no    Item2 Subj1
 ## # … with 206 more rows</code></pre>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">tail</span>(codes1, <span class="dv">10</span>)</code></pre></div>
+<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1"></a><span class="kw">tail</span>(codes1, <span class="dv">10</span>)</span></code></pre></div>
 <pre><code>## # A tibble: 10 x 4
 ##    Speed  Load  Item  Subj 
 ##    &lt;fct&gt;  &lt;fct&gt; &lt;fct&gt; &lt;fct&gt;
@@ -165,13 +407,13 @@ codes1</code></pre></div>
 ##  8 slow   no    Item6 Subj6
 ##  9 medium no    Item6 Subj6
 ## 10 fast   no    Item6 Subj6</code></pre>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co">#xtabs( ~ Subj + Item + Load + Speed, codes1)</span>
-<span class="kw">xtabs</span>(<span class="op">~</span><span class="st"> </span>Load <span class="op">+</span><span class="st"> </span>Speed, codes1)</code></pre></div>
+<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1"></a><span class="co">#xtabs( ~ Subj + Item + Load + Speed, codes1)</span></span>
+<span id="cb6-2"><a href="#cb6-2"></a><span class="kw">xtabs</span>(<span class="op">~</span><span class="st"> </span>Load <span class="op">+</span><span class="st"> </span>Speed, codes1)</span></code></pre></div>
 <pre><code>##      Speed
 ## Load  slow medium fast
 ##   yes   36     36   36
 ##   no    36     36   36</code></pre>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">xtabs</span>(<span class="op">~</span><span class="st"> </span>Subj <span class="op">+</span><span class="st"> </span>Load <span class="op">+</span><span class="st"> </span>Speed, codes1)</code></pre></div>
+<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1"></a><span class="kw">xtabs</span>(<span class="op">~</span><span class="st"> </span>Subj <span class="op">+</span><span class="st"> </span>Load <span class="op">+</span><span class="st"> </span>Speed, codes1)</span></code></pre></div>
 <pre><code>## , , Speed = slow
 ## 
 ##        Load
@@ -204,7 +446,7 @@ codes1</code></pre></div>
 ##   Subj4   6  6
 ##   Subj5   6  6
 ##   Subj6   6  6</code></pre>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">xtabs</span>(<span class="op">~</span><span class="st"> </span>Item <span class="op">+</span><span class="st"> </span>Load <span class="op">+</span><span class="st"> </span>Speed, codes1)</code></pre></div>
+<div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1"></a><span class="kw">xtabs</span>(<span class="op">~</span><span class="st"> </span>Item <span class="op">+</span><span class="st"> </span>Load <span class="op">+</span><span class="st"> </span>Speed, codes1)</span></code></pre></div>
 <pre><code>## , , Speed = slow
 ## 
 ##        Load
@@ -246,13 +488,13 @@ codes1</code></pre></div>
 <p><strong>Design formula:</strong></p>
 <pre><code>Type(2) x Speed(3) x 3 Item[Type] x 6 Subj</code></pre>
 <p>We read the item-part of this formula: “3 Items nested under levels of Type.” The total number of different instances for the random factor <em>Item</em> is 3 items x 2 levels of <em>Type</em>, that is 6 items. The design generates <strong>108 observations</strong>; it is no longer completely crossed.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">design2 &lt;-<span class="st"> </span><span class="kw">fixed.factor</span>(<span class="st">&quot;Speed&quot;</span>, <span class="dt">levels=</span><span class="kw">c</span>(<span class="st">&quot;slow&quot;</span>, <span class="st">&quot;medium&quot;</span>, <span class="st">&quot;fast&quot;</span>)) <span class="op">+</span>
-<span class="st">  </span><span class="kw">fixed.factor</span>(<span class="st">&quot;Type&quot;</span>,  <span class="dt">levels=</span><span class="kw">c</span>(<span class="st">&quot;simple&quot;</span>, <span class="st">&quot;complex&quot;</span>)) <span class="op">+</span>
-<span class="st">  </span><span class="kw">random.factor</span>(<span class="st">&quot;Subj&quot;</span>, <span class="dt">instances=</span><span class="dv">6</span>) <span class="op">+</span><span class="st">   </span>
-<span class="st">  </span><span class="kw">random.factor</span>(<span class="st">&quot;Item&quot;</span>, <span class="dt">groups=</span><span class="st">&quot;Type&quot;</span>, <span class="dt">instances=</span><span class="dv">3</span>)
-
-codes2 &lt;-<span class="st"> </span><span class="kw">arrange</span>(<span class="kw">design.codes</span>(design2), Subj, Item)[<span class="kw">c</span>(<span class="dv">3</span>, <span class="dv">4</span>, <span class="dv">1</span>, <span class="dv">2</span>)]
-codes2</code></pre></div>
+<div class="sourceCode" id="cb13"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1"></a>design2 &lt;-<span class="st"> </span><span class="kw">fixed.factor</span>(<span class="st">&quot;Speed&quot;</span>, <span class="dt">levels=</span><span class="kw">c</span>(<span class="st">&quot;slow&quot;</span>, <span class="st">&quot;medium&quot;</span>, <span class="st">&quot;fast&quot;</span>)) <span class="op">+</span></span>
+<span id="cb13-2"><a href="#cb13-2"></a><span class="st">  </span><span class="kw">fixed.factor</span>(<span class="st">&quot;Type&quot;</span>,  <span class="dt">levels=</span><span class="kw">c</span>(<span class="st">&quot;simple&quot;</span>, <span class="st">&quot;complex&quot;</span>)) <span class="op">+</span></span>
+<span id="cb13-3"><a href="#cb13-3"></a><span class="st">  </span><span class="kw">random.factor</span>(<span class="st">&quot;Subj&quot;</span>, <span class="dt">instances=</span><span class="dv">6</span>) <span class="op">+</span><span class="st">   </span></span>
+<span id="cb13-4"><a href="#cb13-4"></a><span class="st">  </span><span class="kw">random.factor</span>(<span class="st">&quot;Item&quot;</span>, <span class="dt">groups=</span><span class="st">&quot;Type&quot;</span>, <span class="dt">instances=</span><span class="dv">3</span>)</span>
+<span id="cb13-5"><a href="#cb13-5"></a></span>
+<span id="cb13-6"><a href="#cb13-6"></a>codes2 &lt;-<span class="st"> </span><span class="kw">arrange</span>(<span class="kw">design.codes</span>(design2), Subj, Item)[<span class="kw">c</span>(<span class="dv">3</span>, <span class="dv">4</span>, <span class="dv">1</span>, <span class="dv">2</span>)]</span>
+<span id="cb13-7"><a href="#cb13-7"></a>codes2</span></code></pre></div>
 <pre><code>## # A tibble: 108 x 4
 ##    Speed  Type    Subj  Item 
 ##    &lt;fct&gt;  &lt;fct&gt;   &lt;fct&gt; &lt;fct&gt;
@@ -267,7 +509,7 @@ codes2</code></pre></div>
 ##  9 fast   complex Subj1 Item3
 ## 10 slow   simple  Subj1 Item4
 ## # … with 98 more rows</code></pre>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">xtabs</span>(<span class="op">~</span><span class="st"> </span>Item <span class="op">+</span><span class="st"> </span>Type, codes2)</code></pre></div>
+<div class="sourceCode" id="cb15"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1"></a><span class="kw">xtabs</span>(<span class="op">~</span><span class="st"> </span>Item <span class="op">+</span><span class="st"> </span>Type, codes2)</span></code></pre></div>
 <pre><code>##        Type
 ## Item    simple complex
 ##   Item1      0      18
@@ -276,7 +518,7 @@ codes2</code></pre></div>
 ##   Item4     18       0
 ##   Item5     18       0
 ##   Item6     18       0</code></pre>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">xtabs</span>(<span class="op">~</span><span class="st"> </span>Subj <span class="op">+</span><span class="st"> </span>Type, codes2)</code></pre></div>
+<div class="sourceCode" id="cb17"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1"></a><span class="kw">xtabs</span>(<span class="op">~</span><span class="st"> </span>Subj <span class="op">+</span><span class="st"> </span>Type, codes2)</span></code></pre></div>
 <pre><code>##        Type
 ## Subj    simple complex
 ##   Subj1      9       9
@@ -285,10 +527,10 @@ codes2</code></pre></div>
 ##   Subj4      9       9
 ##   Subj5      9       9
 ##   Subj6      9       9</code></pre>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co">#xtabs( ~ Subj + Item + Type + Speed, codes2)</span>
-<span class="co">#xtabs(~ Type + Speed, codes2)</span>
-<span class="co">#xtabs(~ Subj + Type + Speed, codes2)</span>
-<span class="co">#xtabs(~ Item + Type + Speed, codes2)</span></code></pre></div>
+<div class="sourceCode" id="cb19"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1"></a><span class="co">#xtabs( ~ Subj + Item + Type + Speed, codes2)</span></span>
+<span id="cb19-2"><a href="#cb19-2"></a><span class="co">#xtabs(~ Type + Speed, codes2)</span></span>
+<span id="cb19-3"><a href="#cb19-3"></a><span class="co">#xtabs(~ Subj + Type + Speed, codes2)</span></span>
+<span id="cb19-4"><a href="#cb19-4"></a><span class="co">#xtabs(~ Item + Type + Speed, codes2)</span></span></code></pre></div>
 <p>The tables shows that for Items 1 to 3 all available codes for the factor <em>Type</em> are <em>complex</em> and for Items 4 to 6 all codes are <em>simple</em>. Thus, <em>Type</em> is varied between items. Each item is read three times (three levels of <em>Speed</em>) by six subjects. yielding 18 codes in each of the 6 non-zero cells of the <em>Item</em> x <em>Type</em> table.</p>
 <p>Conversely, for all six subjects codes are available for <em>simple</em> and <em>complex</em> items. Thus, <em>Type</em> is varied within subjects. Each text is read three times (i.e., the three speed rates). Therefore, there are 3 texts x 3 levels of speed = 9 codes in each cell of the <em>Subj</em> x <em>Type</em> table.</p>
 <p>The command to specify <em>Speed</em> as between_item factor would be:</p>
@@ -304,14 +546,14 @@ Type(2) x Speed(3) x 2 Item[Speed] x 6 Subj</code></pre>
 <div id="age-between-subjectwithin-item-speed-within-subjectwithin-item-no-counterbalancing" class="section level2">
 <h2><span class="header-section-number">2.3</span> <em>Age</em> between-subject/within-item, <em>Speed</em> within-subject/within-item; no counterbalancing</h2>
 <p>In this example, we replace the factor <em>Load</em> (or <em>Type</em>) with a between-subject factor <em>Age</em>, assuming that half the subjects are young and the other half old.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">design3 &lt;-<span class="st"> </span>
-<span class="st">  </span><span class="kw">fixed.factor</span>(<span class="st">&quot;Speed&quot;</span>, <span class="dt">levels=</span><span class="kw">c</span>(<span class="st">&quot;slow&quot;</span>, <span class="st">&quot;medium&quot;</span>, <span class="st">&quot;fast&quot;</span>)) <span class="op">+</span>
-<span class="st">  </span><span class="kw">fixed.factor</span>(<span class="st">&quot;Age&quot;</span>,  <span class="dt">levels=</span><span class="kw">c</span>(<span class="st">&quot;young&quot;</span>, <span class="st">&quot;old&quot;</span>)) <span class="op">+</span>
-<span class="st">  </span><span class="kw">random.factor</span>(<span class="st">&quot;Item&quot;</span>, <span class="dt">instances=</span><span class="dv">6</span>) <span class="op">+</span>
-<span class="st">  </span><span class="kw">random.factor</span>(<span class="st">&quot;Subj&quot;</span>, <span class="dt">groups=</span><span class="st">&quot;Age&quot;</span>, <span class="dt">instances=</span><span class="dv">3</span>) 
-
-codes3 &lt;-<span class="st"> </span><span class="kw">arrange</span>(<span class="kw">design.codes</span>(design3), Subj, Item)[<span class="kw">c</span>(<span class="dv">4</span>, <span class="dv">3</span>, <span class="dv">2</span>, <span class="dv">1</span>)]
-codes3</code></pre></div>
+<div class="sourceCode" id="cb21"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1"></a>design3 &lt;-<span class="st"> </span></span>
+<span id="cb21-2"><a href="#cb21-2"></a><span class="st">  </span><span class="kw">fixed.factor</span>(<span class="st">&quot;Speed&quot;</span>, <span class="dt">levels=</span><span class="kw">c</span>(<span class="st">&quot;slow&quot;</span>, <span class="st">&quot;medium&quot;</span>, <span class="st">&quot;fast&quot;</span>)) <span class="op">+</span></span>
+<span id="cb21-3"><a href="#cb21-3"></a><span class="st">  </span><span class="kw">fixed.factor</span>(<span class="st">&quot;Age&quot;</span>,  <span class="dt">levels=</span><span class="kw">c</span>(<span class="st">&quot;young&quot;</span>, <span class="st">&quot;old&quot;</span>)) <span class="op">+</span></span>
+<span id="cb21-4"><a href="#cb21-4"></a><span class="st">  </span><span class="kw">random.factor</span>(<span class="st">&quot;Item&quot;</span>, <span class="dt">instances=</span><span class="dv">6</span>) <span class="op">+</span></span>
+<span id="cb21-5"><a href="#cb21-5"></a><span class="st">  </span><span class="kw">random.factor</span>(<span class="st">&quot;Subj&quot;</span>, <span class="dt">groups=</span><span class="st">&quot;Age&quot;</span>, <span class="dt">instances=</span><span class="dv">3</span>) </span>
+<span id="cb21-6"><a href="#cb21-6"></a></span>
+<span id="cb21-7"><a href="#cb21-7"></a>codes3 &lt;-<span class="st"> </span><span class="kw">arrange</span>(<span class="kw">design.codes</span>(design3), Subj, Item)[<span class="kw">c</span>(<span class="dv">4</span>, <span class="dv">3</span>, <span class="dv">2</span>, <span class="dv">1</span>)]</span>
+<span id="cb21-8"><a href="#cb21-8"></a>codes3</span></code></pre></div>
 <pre><code>## # A tibble: 108 x 4
 ##    Age   Speed  Subj  Item 
 ##    &lt;fct&gt; &lt;fct&gt;  &lt;fct&gt; &lt;fct&gt;
@@ -326,7 +568,7 @@ codes3</code></pre></div>
 ##  9 old   fast   Subj1 Item3
 ## 10 old   fast   Subj1 Item4
 ## # … with 98 more rows</code></pre>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">xtabs</span>(<span class="op">~</span><span class="st"> </span>Subj <span class="op">+</span><span class="st"> </span>Age, codes3)</code></pre></div>
+<div class="sourceCode" id="cb23"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1"></a><span class="kw">xtabs</span>(<span class="op">~</span><span class="st"> </span>Subj <span class="op">+</span><span class="st"> </span>Age, codes3)</span></code></pre></div>
 <pre><code>##        Age
 ## Subj    young old
 ##   Subj1     0  18
@@ -335,7 +577,7 @@ codes3</code></pre></div>
 ##   Subj4    18   0
 ##   Subj5    18   0
 ##   Subj6    18   0</code></pre>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">xtabs</span>(<span class="op">~</span><span class="st"> </span>Item <span class="op">+</span><span class="st"> </span>Age, codes3)</code></pre></div>
+<div class="sourceCode" id="cb25"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1"></a><span class="kw">xtabs</span>(<span class="op">~</span><span class="st"> </span>Item <span class="op">+</span><span class="st"> </span>Age, codes3)</span></code></pre></div>
 <pre><code>##        Age
 ## Item    young old
 ##   Item1     9   9
@@ -344,8 +586,8 @@ codes3</code></pre></div>
 ##   Item4     9   9
 ##   Item5     9   9
 ##   Item6     9   9</code></pre>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co">#xtabs( ~ Subj + Item + Age + Speed, codes3)</span>
-<span class="co">#xtabs( ~ Subj + Age + Speed, codes3)</span></code></pre></div>
+<div class="sourceCode" id="cb27"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb27-1"><a href="#cb27-1"></a><span class="co">#xtabs( ~ Subj + Item + Age + Speed, codes3)</span></span>
+<span id="cb27-2"><a href="#cb27-2"></a><span class="co">#xtabs( ~ Subj + Age + Speed, codes3)</span></span></code></pre></div>
 <p>The tables show that subjects 1 to 3 are <em>old</em> and subjects 4 to 6 are <em>young</em> (i.e., <em>Age</em> is a between-subject factor) and that all items are read by young and old subjects (i.e., <em>Age</em> is a within-item factor). The formula for this design can be written as: Age(2) x Speed(3) x 6 Item x 3 Subj[Age], yielding <strong>108 observations</strong>.</p>
 <p>Note that <em>instances</em> specifies the number of instances within <em>groups</em>. To generate code for 25 young and 25 old subjects (i.e., total N=50), we set <code>instances=25</code>.</p>
 <p><strong>Design formula:</strong></p>
@@ -358,14 +600,14 @@ codes3</code></pre></div>
 <p><strong>Design formula:</strong></p>
 <pre><code>Age(2) x Speed(3) x 6 Item x 10 Subj[Age x Speed]</code></pre>
 <p>The total number of subjects is 10 x 2 x 3 = 60. This design generates <strong>360 observations</strong>.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">design4 &lt;-<span class="st"> </span>
-<span class="st">  </span><span class="kw">fixed.factor</span>(<span class="st">&quot;Speed&quot;</span>, <span class="dt">levels=</span><span class="kw">c</span>(<span class="st">&quot;slow&quot;</span>, <span class="st">&quot;medium&quot;</span>, <span class="st">&quot;fast&quot;</span>)) <span class="op">+</span>
-<span class="st">  </span><span class="kw">fixed.factor</span>(<span class="st">&quot;Age&quot;</span>,  <span class="dt">levels=</span><span class="kw">c</span>(<span class="st">&quot;simple&quot;</span>, <span class="st">&quot;complex&quot;</span>)) <span class="op">+</span>
-<span class="st">  </span><span class="kw">random.factor</span>(<span class="st">&quot;Subj&quot;</span>, <span class="dt">groups=</span><span class="kw">c</span>(<span class="st">&quot;Age&quot;</span>, <span class="st">&quot;Speed&quot;</span>), <span class="dt">instances=</span><span class="dv">10</span>) <span class="op">+</span>
-<span class="st">  </span><span class="kw">random.factor</span>(<span class="st">&quot;Item&quot;</span>, <span class="dt">instances=</span><span class="dv">6</span>)   
-
-codes4 &lt;-<span class="st"> </span><span class="kw">arrange</span>(<span class="kw">design.codes</span>(design4), Subj, Item)[<span class="kw">c</span>(<span class="dv">3</span>, <span class="dv">4</span>, <span class="dv">2</span>, <span class="dv">1</span>)]
-codes4</code></pre></div>
+<div class="sourceCode" id="cb30"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb30-1"><a href="#cb30-1"></a>design4 &lt;-<span class="st"> </span></span>
+<span id="cb30-2"><a href="#cb30-2"></a><span class="st">  </span><span class="kw">fixed.factor</span>(<span class="st">&quot;Speed&quot;</span>, <span class="dt">levels=</span><span class="kw">c</span>(<span class="st">&quot;slow&quot;</span>, <span class="st">&quot;medium&quot;</span>, <span class="st">&quot;fast&quot;</span>)) <span class="op">+</span></span>
+<span id="cb30-3"><a href="#cb30-3"></a><span class="st">  </span><span class="kw">fixed.factor</span>(<span class="st">&quot;Age&quot;</span>,  <span class="dt">levels=</span><span class="kw">c</span>(<span class="st">&quot;simple&quot;</span>, <span class="st">&quot;complex&quot;</span>)) <span class="op">+</span></span>
+<span id="cb30-4"><a href="#cb30-4"></a><span class="st">  </span><span class="kw">random.factor</span>(<span class="st">&quot;Subj&quot;</span>, <span class="dt">groups=</span><span class="kw">c</span>(<span class="st">&quot;Age&quot;</span>, <span class="st">&quot;Speed&quot;</span>), <span class="dt">instances=</span><span class="dv">10</span>) <span class="op">+</span></span>
+<span id="cb30-5"><a href="#cb30-5"></a><span class="st">  </span><span class="kw">random.factor</span>(<span class="st">&quot;Item&quot;</span>, <span class="dt">instances=</span><span class="dv">6</span>)   </span>
+<span id="cb30-6"><a href="#cb30-6"></a></span>
+<span id="cb30-7"><a href="#cb30-7"></a>codes4 &lt;-<span class="st"> </span><span class="kw">arrange</span>(<span class="kw">design.codes</span>(design4), Subj, Item)[<span class="kw">c</span>(<span class="dv">3</span>, <span class="dv">4</span>, <span class="dv">2</span>, <span class="dv">1</span>)]</span>
+<span id="cb30-8"><a href="#cb30-8"></a>codes4</span></code></pre></div>
 <pre><code>## # A tibble: 360 x 4
 ##    Speed Age     Item  Subj  
 ##    &lt;fct&gt; &lt;fct&gt;   &lt;fct&gt; &lt;fct&gt; 
@@ -380,7 +622,7 @@ codes4</code></pre></div>
 ##  9 fast  complex Item3 Subj02
 ## 10 fast  complex Item4 Subj02
 ## # … with 350 more rows</code></pre>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">xtabs</span>( <span class="op">~</span><span class="st"> </span>Subj <span class="op">+</span><span class="st"> </span>Age, codes4)</code></pre></div>
+<div class="sourceCode" id="cb32"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb32-1"><a href="#cb32-1"></a><span class="kw">xtabs</span>( <span class="op">~</span><span class="st"> </span>Subj <span class="op">+</span><span class="st"> </span>Age, codes4)</span></code></pre></div>
 <pre><code>##         Age
 ## Subj     simple complex
 ##   Subj01      0       6
@@ -443,7 +685,7 @@ codes4</code></pre></div>
 ##   Subj58      6       0
 ##   Subj59      6       0
 ##   Subj60      6       0</code></pre>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">xtabs</span>( <span class="op">~</span><span class="st"> </span>Subj <span class="op">+</span><span class="st"> </span>Speed, codes4)</code></pre></div>
+<div class="sourceCode" id="cb34"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb34-1"><a href="#cb34-1"></a><span class="kw">xtabs</span>( <span class="op">~</span><span class="st"> </span>Subj <span class="op">+</span><span class="st"> </span>Speed, codes4)</span></code></pre></div>
 <pre><code>##         Speed
 ## Subj     slow medium fast
 ##   Subj01    0      0    6
@@ -506,7 +748,7 @@ codes4</code></pre></div>
 ##   Subj58    6      0    0
 ##   Subj59    6      0    0
 ##   Subj60    6      0    0</code></pre>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">xtabs</span>( <span class="op">~</span><span class="st"> </span>Item <span class="op">+</span><span class="st"> </span>Age, codes4)</code></pre></div>
+<div class="sourceCode" id="cb36"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb36-1"><a href="#cb36-1"></a><span class="kw">xtabs</span>( <span class="op">~</span><span class="st"> </span>Item <span class="op">+</span><span class="st"> </span>Age, codes4)</span></code></pre></div>
 <pre><code>##        Age
 ## Item    simple complex
 ##   Item1     30      30
@@ -515,7 +757,7 @@ codes4</code></pre></div>
 ##   Item4     30      30
 ##   Item5     30      30
 ##   Item6     30      30</code></pre>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">xtabs</span>( <span class="op">~</span><span class="st"> </span>Item <span class="op">+</span><span class="st"> </span>Speed, codes4)</code></pre></div>
+<div class="sourceCode" id="cb38"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb38-1"><a href="#cb38-1"></a><span class="kw">xtabs</span>( <span class="op">~</span><span class="st"> </span>Item <span class="op">+</span><span class="st"> </span>Speed, codes4)</span></code></pre></div>
 <pre><code>##        Speed
 ## Item    slow medium fast
 ##   Item1   20     20   20
@@ -524,7 +766,7 @@ codes4</code></pre></div>
 ##   Item4   20     20   20
 ##   Item5   20     20   20
 ##   Item6   20     20   20</code></pre>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co">#xtabs( ~ Subj + Item + Age + Speed, codes4)</span></code></pre></div>
+<div class="sourceCode" id="cb40"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb40-1"><a href="#cb40-1"></a><span class="co">#xtabs( ~ Subj + Item + Age + Speed, codes4)</span></span></code></pre></div>
 <p>The tables show that <em>Age</em> and <em>Speed</em> vary indeed between subjects and within items.</p>
 </div>
 </div>
@@ -537,16 +779,16 @@ codes4</code></pre></div>
 <pre><code>Speed(3) x Load(2) x 1 Item[Speed x Load] x 1 Subj[Speed x Load] x 
 (3 x 2) Item-by-Subj[Speed x Load x Item[Speed x Load] + Subj[Speed x Load]] </code></pre>
 <p>We have 1 item and 1 subject nested under the levels of the <em>Speed</em> x <em>Load</em> design. There are 36 instances of the random factor resulting from the multiplication of the random factors <em>Item</em> and <em>Subj</em>. The design generates 3 x 2 x 1 x 1 x (3 x 2) <strong>36 observations</strong>.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">design5 &lt;-<span class="st"> </span>
-<span class="st">  </span><span class="kw">fixed.factor</span>(<span class="st">&quot;Speed&quot;</span>, <span class="dt">levels=</span><span class="kw">c</span>(<span class="st">&quot;slow&quot;</span>, <span class="st">&quot;medium&quot;</span>, <span class="st">&quot;fast&quot;</span>)) <span class="op">+</span>
-<span class="st">  </span><span class="kw">fixed.factor</span>(<span class="st">&quot;Load&quot;</span>,  <span class="dt">levels=</span><span class="kw">c</span>(<span class="st">&quot;simple&quot;</span>, <span class="st">&quot;complex&quot;</span>)) <span class="op">+</span>
-<span class="st">  </span><span class="kw">random.factor</span>(<span class="st">&quot;Subj&quot;</span>, <span class="dt">instances=</span><span class="dv">1</span>) <span class="op">+</span><span class="st"> </span>
-<span class="st">  </span><span class="kw">random.factor</span>(<span class="st">&quot;Item&quot;</span>, <span class="dt">instances=</span><span class="dv">1</span>) <span class="op">+</span>
-<span class="st">  </span><span class="kw">random.factor</span>(<span class="kw">c</span>(<span class="st">&quot;Subj&quot;</span>, <span class="st">&quot;Item&quot;</span>), <span class="dt">groups=</span><span class="kw">c</span>(<span class="st">&quot;Speed&quot;</span>, <span class="st">&quot;Load&quot;</span>))
-
-
-codes5 &lt;-<span class="st"> </span><span class="kw">arrange</span>(<span class="kw">design.codes</span>(design5), Subj, Item)[<span class="kw">c</span>(<span class="dv">3</span>, <span class="dv">4</span>, <span class="dv">1</span>, <span class="dv">2</span>)]
-codes5</code></pre></div>
+<div class="sourceCode" id="cb42"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb42-1"><a href="#cb42-1"></a>design5 &lt;-<span class="st"> </span></span>
+<span id="cb42-2"><a href="#cb42-2"></a><span class="st">  </span><span class="kw">fixed.factor</span>(<span class="st">&quot;Speed&quot;</span>, <span class="dt">levels=</span><span class="kw">c</span>(<span class="st">&quot;slow&quot;</span>, <span class="st">&quot;medium&quot;</span>, <span class="st">&quot;fast&quot;</span>)) <span class="op">+</span></span>
+<span id="cb42-3"><a href="#cb42-3"></a><span class="st">  </span><span class="kw">fixed.factor</span>(<span class="st">&quot;Load&quot;</span>,  <span class="dt">levels=</span><span class="kw">c</span>(<span class="st">&quot;simple&quot;</span>, <span class="st">&quot;complex&quot;</span>)) <span class="op">+</span></span>
+<span id="cb42-4"><a href="#cb42-4"></a><span class="st">  </span><span class="kw">random.factor</span>(<span class="st">&quot;Subj&quot;</span>, <span class="dt">instances=</span><span class="dv">1</span>) <span class="op">+</span><span class="st"> </span></span>
+<span id="cb42-5"><a href="#cb42-5"></a><span class="st">  </span><span class="kw">random.factor</span>(<span class="st">&quot;Item&quot;</span>, <span class="dt">instances=</span><span class="dv">1</span>) <span class="op">+</span></span>
+<span id="cb42-6"><a href="#cb42-6"></a><span class="st">  </span><span class="kw">random.factor</span>(<span class="kw">c</span>(<span class="st">&quot;Subj&quot;</span>, <span class="st">&quot;Item&quot;</span>), <span class="dt">groups=</span><span class="kw">c</span>(<span class="st">&quot;Speed&quot;</span>, <span class="st">&quot;Load&quot;</span>))</span>
+<span id="cb42-7"><a href="#cb42-7"></a></span>
+<span id="cb42-8"><a href="#cb42-8"></a></span>
+<span id="cb42-9"><a href="#cb42-9"></a>codes5 &lt;-<span class="st"> </span><span class="kw">arrange</span>(<span class="kw">design.codes</span>(design5), Subj, Item)[<span class="kw">c</span>(<span class="dv">3</span>, <span class="dv">4</span>, <span class="dv">1</span>, <span class="dv">2</span>)]</span>
+<span id="cb42-10"><a href="#cb42-10"></a>codes5</span></code></pre></div>
 <pre><code>## # A tibble: 36 x 4
 ##    Speed  Load    Subj  Item 
 ##    &lt;fct&gt;  &lt;fct&gt;   &lt;fct&gt; &lt;fct&gt;
@@ -561,7 +803,7 @@ codes5</code></pre></div>
 ##  9 medium complex Subj2 Item3
 ## 10 fast   simple  Subj2 Item4
 ## # … with 26 more rows</code></pre>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">xtabs</span>(<span class="op">~</span><span class="st"> </span>Subj <span class="op">+</span><span class="st"> </span>Speed <span class="op">+</span><span class="st"> </span>Load, codes5)</code></pre></div>
+<div class="sourceCode" id="cb44"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb44-1"><a href="#cb44-1"></a><span class="kw">xtabs</span>(<span class="op">~</span><span class="st"> </span>Subj <span class="op">+</span><span class="st"> </span>Speed <span class="op">+</span><span class="st"> </span>Load, codes5)</span></code></pre></div>
 <pre><code>## , , Load = simple
 ## 
 ##        Speed
@@ -583,7 +825,7 @@ codes5</code></pre></div>
 ##   Subj4    1      1    1
 ##   Subj5    1      1    1
 ##   Subj6    1      1    1</code></pre>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">xtabs</span>(<span class="op">~</span><span class="st"> </span>Item <span class="op">+</span><span class="st"> </span>Speed <span class="op">+</span><span class="st"> </span>Load, codes5)</code></pre></div>
+<div class="sourceCode" id="cb46"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb46-1"><a href="#cb46-1"></a><span class="kw">xtabs</span>(<span class="op">~</span><span class="st"> </span>Item <span class="op">+</span><span class="st"> </span>Speed <span class="op">+</span><span class="st"> </span>Load, codes5)</span></code></pre></div>
 <pre><code>## , , Load = simple
 ## 
 ##        Speed
@@ -605,7 +847,7 @@ codes5</code></pre></div>
 ##   Item4    1      1    1
 ##   Item5    1      1    1
 ##   Item6    1      1    1</code></pre>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">xtabs</span>( <span class="op">~</span><span class="st"> </span>Subj <span class="op">+</span><span class="st"> </span>Item <span class="op">+</span><span class="st"> </span>Load <span class="op">+</span><span class="st"> </span>Speed, codes1)</code></pre></div>
+<div class="sourceCode" id="cb48"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb48-1"><a href="#cb48-1"></a><span class="kw">xtabs</span>( <span class="op">~</span><span class="st"> </span>Subj <span class="op">+</span><span class="st"> </span>Item <span class="op">+</span><span class="st"> </span>Load <span class="op">+</span><span class="st"> </span>Speed, codes1)</span></code></pre></div>
 <pre><code>## , , Load = yes, Speed = slow
 ## 
 ##        Item
@@ -677,16 +919,16 @@ codes5</code></pre></div>
   random.factor(&quot;Item&quot;, instances= 4) +
   ...</code></pre>
 <p>will generate codes for 60 subjects and 24 texts.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">design6 &lt;-<span class="st"> </span>
-<span class="st">  </span><span class="kw">fixed.factor</span>(<span class="st">&quot;Speed&quot;</span>, <span class="dt">levels=</span><span class="kw">c</span>(<span class="st">&quot;slow&quot;</span>, <span class="st">&quot;medium&quot;</span>, <span class="st">&quot;fast&quot;</span>)) <span class="op">+</span>
-<span class="st">  </span><span class="kw">fixed.factor</span>(<span class="st">&quot;Load&quot;</span>,  <span class="dt">levels=</span><span class="kw">c</span>(<span class="st">&quot;simple&quot;</span>, <span class="st">&quot;complex&quot;</span>)) <span class="op">+</span>
-<span class="st">  </span><span class="kw">random.factor</span>(<span class="st">&quot;Subj&quot;</span>, <span class="dt">instances=</span><span class="dv">10</span>) <span class="op">+</span><span class="st"> </span>
-<span class="st">  </span><span class="kw">random.factor</span>(<span class="st">&quot;Item&quot;</span>, <span class="dt">instances=</span><span class="dv">4</span>) <span class="op">+</span>
-<span class="st">  </span><span class="kw">random.factor</span>(<span class="kw">c</span>(<span class="st">&quot;Subj&quot;</span>, <span class="st">&quot;Item&quot;</span>), <span class="dt">groups=</span><span class="kw">c</span>(<span class="st">&quot;Speed&quot;</span>, <span class="st">&quot;Load&quot;</span>))
-
-
-codes6 &lt;-<span class="st"> </span><span class="kw">arrange</span>(<span class="kw">design.codes</span>(design6), Subj, Item)[<span class="kw">c</span>(<span class="dv">3</span>, <span class="dv">4</span>, <span class="dv">1</span>, <span class="dv">2</span>)]
-codes6</code></pre></div>
+<div class="sourceCode" id="cb51"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb51-1"><a href="#cb51-1"></a>design6 &lt;-<span class="st"> </span></span>
+<span id="cb51-2"><a href="#cb51-2"></a><span class="st">  </span><span class="kw">fixed.factor</span>(<span class="st">&quot;Speed&quot;</span>, <span class="dt">levels=</span><span class="kw">c</span>(<span class="st">&quot;slow&quot;</span>, <span class="st">&quot;medium&quot;</span>, <span class="st">&quot;fast&quot;</span>)) <span class="op">+</span></span>
+<span id="cb51-3"><a href="#cb51-3"></a><span class="st">  </span><span class="kw">fixed.factor</span>(<span class="st">&quot;Load&quot;</span>,  <span class="dt">levels=</span><span class="kw">c</span>(<span class="st">&quot;simple&quot;</span>, <span class="st">&quot;complex&quot;</span>)) <span class="op">+</span></span>
+<span id="cb51-4"><a href="#cb51-4"></a><span class="st">  </span><span class="kw">random.factor</span>(<span class="st">&quot;Subj&quot;</span>, <span class="dt">instances=</span><span class="dv">10</span>) <span class="op">+</span><span class="st"> </span></span>
+<span id="cb51-5"><a href="#cb51-5"></a><span class="st">  </span><span class="kw">random.factor</span>(<span class="st">&quot;Item&quot;</span>, <span class="dt">instances=</span><span class="dv">4</span>) <span class="op">+</span></span>
+<span id="cb51-6"><a href="#cb51-6"></a><span class="st">  </span><span class="kw">random.factor</span>(<span class="kw">c</span>(<span class="st">&quot;Subj&quot;</span>, <span class="st">&quot;Item&quot;</span>), <span class="dt">groups=</span><span class="kw">c</span>(<span class="st">&quot;Speed&quot;</span>, <span class="st">&quot;Load&quot;</span>))</span>
+<span id="cb51-7"><a href="#cb51-7"></a></span>
+<span id="cb51-8"><a href="#cb51-8"></a></span>
+<span id="cb51-9"><a href="#cb51-9"></a>codes6 &lt;-<span class="st"> </span><span class="kw">arrange</span>(<span class="kw">design.codes</span>(design6), Subj, Item)[<span class="kw">c</span>(<span class="dv">3</span>, <span class="dv">4</span>, <span class="dv">1</span>, <span class="dv">2</span>)]</span>
+<span id="cb51-10"><a href="#cb51-10"></a>codes6</span></code></pre></div>
 <pre><code>## # A tibble: 1,440 x 4
 ##    Speed  Load    Subj   Item  
 ##    &lt;fct&gt;  &lt;fct&gt;   &lt;fct&gt;  &lt;fct&gt; 
@@ -701,11 +943,11 @@ codes6</code></pre></div>
 ##  9 medium simple  Subj01 Item09
 ## 10 medium complex Subj01 Item10
 ## # … with 1,430 more rows</code></pre>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">length</span>(<span class="kw">unique</span>(codes6<span class="op">$</span>Subj))</code></pre></div>
+<div class="sourceCode" id="cb53"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb53-1"><a href="#cb53-1"></a><span class="kw">length</span>(<span class="kw">unique</span>(codes6<span class="op">$</span>Subj))</span></code></pre></div>
 <pre><code>## [1] 60</code></pre>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">length</span>(<span class="kw">unique</span>(codes6<span class="op">$</span>Item))</code></pre></div>
+<div class="sourceCode" id="cb55"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb55-1"><a href="#cb55-1"></a><span class="kw">length</span>(<span class="kw">unique</span>(codes6<span class="op">$</span>Item))</span></code></pre></div>
 <pre><code>## [1] 24</code></pre>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">length</span>(<span class="kw">unique</span>(<span class="kw">paste</span>(codes6<span class="op">$</span>Subj, codes6<span class="op">$</span>Item)))</code></pre></div>
+<div class="sourceCode" id="cb57"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb57-1"><a href="#cb57-1"></a><span class="kw">length</span>(<span class="kw">unique</span>(<span class="kw">paste</span>(codes6<span class="op">$</span>Subj, codes6<span class="op">$</span>Item)))</span></code></pre></div>
 <pre><code>## [1] 1440</code></pre>
 <p><strong>Design formula:</strong></p>
 <pre><code>Speed(3) x Load(2) x 4 Item[Speed x Load] x 10 Subj[Speed x Load] x 
@@ -726,14 +968,14 @@ codes6</code></pre></div>
 </div>
 <div id="packages" class="section level2">
 <h2><span class="header-section-number">5.2</span> Packages</h2>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">sessionInfo</span>()</code></pre></div>
-<pre><code>## R version 3.5.1 (2018-07-02)
-## Platform: x86_64-apple-darwin15.6.0 (64-bit)
-## Running under: macOS  10.14.6
+<div class="sourceCode" id="cb60"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb60-1"><a href="#cb60-1"></a><span class="kw">sessionInfo</span>()</span></code></pre></div>
+<pre><code>## R version 4.0.3 (2020-10-10)
+## Platform: x86_64-apple-darwin17.0 (64-bit)
+## Running under: macOS Catalina 10.15.6
 ## 
 ## Matrix products: default
-## BLAS: /Library/Frameworks/R.framework/Versions/3.5/Resources/lib/libRblas.0.dylib
-## LAPACK: /Library/Frameworks/R.framework/Versions/3.5/Resources/lib/libRlapack.dylib
+## BLAS:   /Library/Frameworks/R.framework/Versions/4.0/Resources/lib/libRblas.dylib
+## LAPACK: /Library/Frameworks/R.framework/Versions/4.0/Resources/lib/libRlapack.dylib
 ## 
 ## locale:
 ## [1] C/en_US.UTF-8/en_US.UTF-8/C/en_US.UTF-8/en_US.UTF-8
@@ -742,17 +984,21 @@ codes6</code></pre></div>
 ## [1] stats     graphics  grDevices utils     datasets  methods   base     
 ## 
 ## other attached packages:
-## [1] designr_0.1.10 dplyr_0.8.5   
+## [1] designr_0.1.11 dplyr_1.0.4   
 ## 
 ## loaded via a namespace (and not attached):
-##  [1] Rcpp_1.0.4.6     knitr_1.28       magrittr_1.5     tidyselect_1.0.0
-##  [5] R6_2.4.1         rlang_0.4.5      fansi_0.4.1      stringr_1.4.0   
-##  [9] tools_3.5.1      xfun_0.12        utf8_1.1.4       cli_2.0.2       
-## [13] htmltools_0.4.0  ellipsis_0.3.0   yaml_2.2.1       assertthat_0.2.1
-## [17] digest_0.6.25    tibble_3.0.0     lifecycle_0.2.0  crayon_1.3.4    
-## [21] purrr_0.3.3      vctrs_0.2.4      glue_1.4.0       evaluate_0.14   
-## [25] rmarkdown_2.1    stringi_1.4.6    compiler_3.5.1   pillar_1.4.3    
-## [29] pkgconfig_2.0.3</code></pre>
+##  [1] Rcpp_1.0.6        nloptr_1.2.2.2    pillar_1.5.0      bslib_0.2.4      
+##  [5] compiler_4.0.3    jquerylib_0.1.3   tools_4.0.3       boot_1.3-27      
+##  [9] digest_0.6.27     lme4_1.1-26       statmod_1.4.35    nlme_3.1-152     
+## [13] jsonlite_1.7.2    evaluate_0.14     lifecycle_1.0.0   tibble_3.0.6     
+## [17] lattice_0.20-41   pkgconfig_2.0.3   rlang_0.4.10      Matrix_1.3-2     
+## [21] rstudioapi_0.13   cli_2.3.1         DBI_1.1.1         yaml_2.2.1       
+## [25] xfun_0.21         stringr_1.4.0     knitr_1.31        generics_0.1.0   
+## [29] vctrs_0.3.6       sass_0.3.1        grid_4.0.3        tidyselect_1.1.0 
+## [33] glue_1.4.2        R6_2.5.0          fansi_0.4.2       rmarkdown_2.7    
+## [37] minqa_1.2.4       purrr_0.3.4       magrittr_2.0.1    ellipsis_0.3.1   
+## [41] htmltools_0.5.1.1 MASS_7.3-53.1     splines_4.0.3     assertthat_0.2.1 
+## [45] utf8_1.1.4        stringi_1.5.3     crayon_1.4.1</code></pre>
 </div>
 </div>
 
