@@ -16,106 +16,103 @@
 
 <title>From Design to Dataframe</title>
 
-<script>// Hide empty <a> tag within highlighted CodeBlock for screen reader accessibility (see https://github.com/jgm/pandoc/issues/6352#issuecomment-626106786) -->
-// v0.0.1
-// Written by JooYoung Seo (jooyoung@psu.edu) and Atsushi Yasumoto on June 1st, 2020.
-
-document.addEventListener('DOMContentLoaded', function() {
-  const codeList = document.getElementsByClassName("sourceCode");
-  for (var i = 0; i < codeList.length; i++) {
-    var linkList = codeList[i].getElementsByTagName('a');
-    for (var j = 0; j < linkList.length; j++) {
-      if (linkList[j].innerHTML === "") {
-        linkList[j].setAttribute('aria-hidden', 'true');
-      }
-    }
+<script>// Pandoc 2.9 adds attributes on both header and div. We remove the former (to
+// be compatible with the behavior of Pandoc < 2.8).
+document.addEventListener('DOMContentLoaded', function(e) {
+  var hs = document.querySelectorAll("div.section[class*='level'] > :first-child");
+  var i, h, a;
+  for (i = 0; i < hs.length; i++) {
+    h = hs[i];
+    if (!/^h[1-6]$/i.test(h.tagName)) continue;  // it should be a header h1-h6
+    a = h.attributes;
+    while (a.length > 0) h.removeAttribute(a[0].name);
   }
 });
 </script>
 
 <style type="text/css">
-  code{white-space: pre-wrap;}
-  span.smallcaps{font-variant: small-caps;}
-  span.underline{text-decoration: underline;}
-  div.column{display: inline-block; vertical-align: top; width: 50%;}
-  div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
-  ul.task-list{list-style: none;}
-    </style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+span.underline{text-decoration: underline;}
+div.column{display: inline-block; vertical-align: top; width: 50%;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+</style>
+
 
 
 <style type="text/css">
-  code {
-    white-space: pre;
-  }
-  .sourceCode {
-    overflow: visible;
-  }
+code {
+white-space: pre;
+}
+.sourceCode {
+overflow: visible;
+}
 </style>
 <style type="text/css" data-origin="pandoc">
-code.sourceCode > span { display: inline-block; line-height: 1.25; }
-code.sourceCode > span { color: inherit; text-decoration: inherit; }
-code.sourceCode > span:empty { height: 1.2em; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
 .sourceCode { overflow: visible; }
-code.sourceCode { white-space: pre; position: relative; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
 div.sourceCode { margin: 1em 0; }
 pre.sourceCode { margin: 0; }
 @media screen {
 div.sourceCode { overflow: auto; }
 }
 @media print {
-code.sourceCode { white-space: pre-wrap; }
-code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
 }
 pre.numberSource code
-  { counter-reset: source-line 0; }
+{ counter-reset: source-line 0; }
 pre.numberSource code > span
-  { position: relative; left: -4em; counter-increment: source-line; }
+{ position: relative; left: -4em; counter-increment: source-line; }
 pre.numberSource code > span > a:first-child::before
-  { content: counter(source-line);
-    position: relative; left: -1em; text-align: right; vertical-align: baseline;
-    border: none; display: inline-block;
-    -webkit-touch-callout: none; -webkit-user-select: none;
-    -khtml-user-select: none; -moz-user-select: none;
-    -ms-user-select: none; user-select: none;
-    padding: 0 4px; width: 4em;
-    color: #aaaaaa;
-  }
-pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
-div.sourceCode
-  {   }
-@media screen {
-code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+{ content: counter(source-line);
+position: relative; left: -1em; text-align: right; vertical-align: baseline;
+border: none; display: inline-block;
+-webkit-touch-callout: none; -webkit-user-select: none;
+-khtml-user-select: none; -moz-user-select: none;
+-ms-user-select: none; user-select: none;
+padding: 0 4px; width: 4em;
+color: #aaaaaa;
 }
-code span.al { color: #ff0000; font-weight: bold; } /* Alert */
-code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
-code span.at { color: #7d9029; } /* Attribute */
-code span.bn { color: #40a070; } /* BaseN */
-code span.bu { } /* BuiltIn */
-code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
-code span.ch { color: #4070a0; } /* Char */
-code span.cn { color: #880000; } /* Constant */
-code span.co { color: #60a0b0; font-style: italic; } /* Comment */
-code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
-code span.do { color: #ba2121; font-style: italic; } /* Documentation */
-code span.dt { color: #902000; } /* DataType */
-code span.dv { color: #40a070; } /* DecVal */
-code span.er { color: #ff0000; font-weight: bold; } /* Error */
-code span.ex { } /* Extension */
-code span.fl { color: #40a070; } /* Float */
-code span.fu { color: #06287e; } /* Function */
-code span.im { } /* Import */
-code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
-code span.kw { color: #007020; font-weight: bold; } /* Keyword */
-code span.op { color: #666666; } /* Operator */
-code span.ot { color: #007020; } /* Other */
-code span.pp { color: #bc7a00; } /* Preprocessor */
-code span.sc { color: #4070a0; } /* SpecialChar */
-code span.ss { color: #bb6688; } /* SpecialString */
-code span.st { color: #4070a0; } /* String */
-code span.va { color: #19177c; } /* Variable */
-code span.vs { color: #4070a0; } /* VerbatimString */
-code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
-
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa; padding-left: 4px; }
+div.sourceCode
+{ }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } 
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } 
+code span.at { color: #7d9029; } 
+code span.bn { color: #40a070; } 
+code span.bu { color: #008000; } 
+code span.cf { color: #007020; font-weight: bold; } 
+code span.ch { color: #4070a0; } 
+code span.cn { color: #880000; } 
+code span.co { color: #60a0b0; font-style: italic; } 
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } 
+code span.do { color: #ba2121; font-style: italic; } 
+code span.dt { color: #902000; } 
+code span.dv { color: #40a070; } 
+code span.er { color: #ff0000; font-weight: bold; } 
+code span.ex { } 
+code span.fl { color: #40a070; } 
+code span.fu { color: #06287e; } 
+code span.im { color: #008000; font-weight: bold; } 
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } 
+code span.kw { color: #007020; font-weight: bold; } 
+code span.op { color: #666666; } 
+code span.ot { color: #007020; } 
+code span.pp { color: #bc7a00; } 
+code span.sc { color: #4070a0; } 
+code span.ss { color: #bb6688; } 
+code span.st { color: #4070a0; } 
+code span.va { color: #19177c; } 
+code span.vs { color: #4070a0; } 
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } 
 </style>
 <script>
 // apply pandoc div.sourceCode style to pre.sourceCode instead
@@ -124,13 +121,20 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
   for (var i = 0; i < sheets.length; i++) {
     if (sheets[i].ownerNode.dataset["origin"] !== "pandoc") continue;
     try { var rules = sheets[i].cssRules; } catch (e) { continue; }
-    for (var j = 0; j < rules.length; j++) {
+    var j = 0;
+    while (j < rules.length) {
       var rule = rules[j];
       // check if there is a div.sourceCode rule
-      if (rule.type !== rule.STYLE_RULE || rule.selectorText !== "div.sourceCode") continue;
+      if (rule.type !== rule.STYLE_RULE || rule.selectorText !== "div.sourceCode") {
+        j++;
+        continue;
+      }
       var style = rule.style.cssText;
       // check if color or background-color is set
-      if (rule.style.color === '' && rule.style.backgroundColor === '') continue;
+      if (rule.style.color === '' && rule.style.backgroundColor === '') {
+        j++;
+        continue;
+      }
       // replace div.sourceCode by a pre.sourceCode rule
       sheets[i].deleteRule(j);
       sheets[i].insertRule('pre.sourceCode{' + style + '}', j);
@@ -341,45 +345,91 @@ code > span.er { color: #a61717; background-color: #e3d2d2; }
 
 <div id="TOC">
 <ul>
-<li><a href="#setup"><span class="toc-section-number">1</span> Setup</a></li>
-<li><a href="#experimental-designs"><span class="toc-section-number">2</span> Experimental Design(s)</a><ul>
-<li><a href="#complete-within-subject-and-within-item-design-no-counterbalancing"><span class="toc-section-number">2.1</span> Complete within-subject and within-item design; no counterbalancing</a></li>
-<li><a href="#speed-within-subjectwithin-item-text-within-subjectbetween-item-no-counterbalancing"><span class="toc-section-number">2.2</span> <em>Speed</em> within-subject/within-item, <em>Text</em> within-subject/between-item; no counterbalancing</a></li>
-<li><a href="#age-between-subjectwithin-item-speed-within-subjectwithin-item-no-counterbalancing"><span class="toc-section-number">2.3</span> <em>Age</em> between-subject/within-item, <em>Speed</em> within-subject/within-item; no counterbalancing</a></li>
-<li><a href="#age-between-subjectwithin-item-speed-between-subjectwithin-item-no-counterbalancing"><span class="toc-section-number">2.4</span> <em>Age</em> between-subject/within-item, <em>Speed</em> between-subject/within-item; no counterbalancing</a></li>
+<li><a href="#setup" id="toc-setup"><span class="toc-section-number">1</span> Setup</a></li>
+<li><a href="#experimental-designs" id="toc-experimental-designs"><span class="toc-section-number">2</span> Experimental Design(s)</a>
+<ul>
+<li><a href="#complete-within-subject-and-within-item-design-no-counterbalancing" id="toc-complete-within-subject-and-within-item-design-no-counterbalancing"><span class="toc-section-number">2.1</span> Complete within-subject and
+within-item design; no counterbalancing</a></li>
+<li><a href="#speed-within-subjectwithin-item-text-within-subjectbetween-item-no-counterbalancing" id="toc-speed-within-subjectwithin-item-text-within-subjectbetween-item-no-counterbalancing"><span class="toc-section-number">2.2</span> <em>Speed</em>
+within-subject/within-item, <em>Text</em> within-subject/between-item;
+no counterbalancing</a></li>
+<li><a href="#age-between-subjectwithin-item-speed-within-subjectwithin-item-no-counterbalancing" id="toc-age-between-subjectwithin-item-speed-within-subjectwithin-item-no-counterbalancing"><span class="toc-section-number">2.3</span> <em>Age</em>
+between-subject/within-item, <em>Speed</em> within-subject/within-item;
+no counterbalancing</a></li>
+<li><a href="#age-between-subjectwithin-item-speed-between-subjectwithin-item-no-counterbalancing" id="toc-age-between-subjectwithin-item-speed-between-subjectwithin-item-no-counterbalancing"><span class="toc-section-number">2.4</span> <em>Age</em>
+between-subject/within-item, <em>Speed</em> between-subject/within-item;
+no counterbalancing</a></li>
 </ul></li>
-<li><a href="#counterbalancing-speed-and-load"><span class="toc-section-number">3</span> Counterbalancing <em>Speed</em> and <em>Load</em></a></li>
-<li><a href="#outlook"><span class="toc-section-number">4</span> Outlook</a></li>
-<li><a href="#appendix"><span class="toc-section-number">5</span> Appendix</a><ul>
-<li><a href="#acknowledgement"><span class="toc-section-number">5.1</span> Acknowledgement</a></li>
-<li><a href="#packages"><span class="toc-section-number">5.2</span> Packages</a></li>
+<li><a href="#counterbalancing-speed-and-load" id="toc-counterbalancing-speed-and-load"><span class="toc-section-number">3</span> Counterbalancing <em>Speed</em> and
+<em>Load</em></a></li>
+<li><a href="#outlook" id="toc-outlook"><span class="toc-section-number">4</span> Outlook</a></li>
+<li><a href="#appendix" id="toc-appendix"><span class="toc-section-number">5</span> Appendix</a>
+<ul>
+<li><a href="#acknowledgement" id="toc-acknowledgement"><span class="toc-section-number">5.1</span> Acknowledgement</a></li>
+<li><a href="#packages" id="toc-packages"><span class="toc-section-number">5.2</span> Packages</a></li>
 </ul></li>
 </ul>
 </div>
 
-<div id="setup" class="section level1">
+<div id="setup" class="section level1" number="1">
 <h1><span class="header-section-number">1</span> Setup</h1>
 </div>
-<div id="experimental-designs" class="section level1">
-<h1><span class="header-section-number">2</span> Experimental Design(s)</h1>
-<p>In an experimental design, we distinguish between random and fixed factors. The “levels” of the random factors are quasi-random samples from a population of persons (subjects) or material (items). To avoid confusion with levels of fixed factors we will refer to levels of random factors as <em>instances</em>. For fixed factors, usual (quasi-)experimental ones, we must specify whether they are between- or within-subjects and between- or within-items. For a given fixed factor all four combinations are possible in principle. We also need to decide on a counterbalancing scheme; a common example is a Latin square applied to all or a subset of the factors.</p>
-<p>In this vignette, we illustrate how to set up an experiment using subject (Subj) and item (Item) as random factors. In this fictive experiment, the words of a text are presented serially one at a time at a <em>slow</em>, <em>medium</em>, or <em>high</em> rate (i.e., fixed factor <em>Speed</em> with three levels) at the center of the screen. A second factor is cognitive load varying whether subjects have keep six digits in memory while reading or not (i.e., fixed factor <em>Load</em> with two levels <em>yes</em> and <em>no</em>).</p>
-<p>Typically, in such an experiment, (1) each subject reads different texts (Item) in the 2 x 3 experimental conditions; (2) each subject reads the same number of texts in each condition; (3) across subjects each text (item) is presented equally often in the six experimental conditions. The final example in this vignette implements this design. However, for didactic reasons, we first show how within/between-subject and within/between-item features of the factors are specified without counterbalancing. These designs are preferred if repeated exposure to the same stimuli in an experimental condition does not have any confounding effects on the measure.</p>
-<div id="complete-within-subject-and-within-item-design-no-counterbalancing" class="section level2">
-<h2><span class="header-section-number">2.1</span> Complete within-subject and within-item design; no counterbalancing</h2>
-<p>In the first version of the experimental design, each subject sees each text in each of 2 x 3 experimental conditions. Thus, the two fixed factors <em>Speed</em> and <em>Load</em> are both within-subject and within-item. A minimum of six subjects and six texts is required for a complete within-subject/within-item design. We summarize the design with the <strong>design formula:</strong></p>
+<div id="experimental-designs" class="section level1" number="2">
+<h1><span class="header-section-number">2</span> Experimental
+Design(s)</h1>
+<p>In an experimental design, we distinguish between random and fixed
+factors. The “levels” of the random factors are quasi-random samples
+from a population of persons (subjects) or material (items). To avoid
+confusion with levels of fixed factors we will refer to levels of random
+factors as <em>instances</em>. For fixed factors, usual
+(quasi-)experimental ones, we must specify whether they are between- or
+within-subjects and between- or within-items. For a given fixed factor
+all four combinations are possible in principle. We also need to decide
+on a counterbalancing scheme; a common example is a Latin square applied
+to all or a subset of the factors.</p>
+<p>In this vignette, we illustrate how to set up an experiment using
+subject (Subj) and item (Item) as random factors. In this fictive
+experiment, the words of a text are presented serially one at a time at
+a <em>slow</em>, <em>medium</em>, or <em>high</em> rate (i.e., fixed
+factor <em>Speed</em> with three levels) at the center of the screen. A
+second factor is cognitive load varying whether subjects have keep six
+digits in memory while reading or not (i.e., fixed factor <em>Load</em>
+with two levels <em>yes</em> and <em>no</em>).</p>
+<p>Typically, in such an experiment, (1) each subject reads different
+texts (Item) in the 2 x 3 experimental conditions; (2) each subject
+reads the same number of texts in each condition; (3) across subjects
+each text (item) is presented equally often in the six experimental
+conditions. The final example in this vignette implements this design.
+However, for didactic reasons, we first show how within/between-subject
+and within/between-item features of the factors are specified without
+counterbalancing. These designs are preferred if repeated exposure to
+the same stimuli in an experimental condition does not have any
+confounding effects on the measure.</p>
+<div id="complete-within-subject-and-within-item-design-no-counterbalancing" class="section level2" number="2.1">
+<h2><span class="header-section-number">2.1</span> Complete
+within-subject and within-item design; no counterbalancing</h2>
+<p>In the first version of the experimental design, each subject sees
+each text in each of 2 x 3 experimental conditions. Thus, the two fixed
+factors <em>Speed</em> and <em>Load</em> are both within-subject and
+within-item. A minimum of six subjects and six texts is required for a
+complete within-subject/within-item design. We summarize the design with
+the <strong>design formula:</strong></p>
 <pre><code>Load(2) x Speed(3) x 6 Item x 6 Subj</code></pre>
-<p>This is a completely crossed design. Note the difference between specification of levels for fixed and instances for random factors. The product of numbers in the formula informs about the number of observations generated by the design. In this case: <strong>216 observations</strong>.</p>
-<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1"></a>design1 &lt;-<span class="st"> </span></span>
-<span id="cb2-2"><a href="#cb2-2"></a><span class="st">  </span><span class="kw">fixed.factor</span>(<span class="st">&quot;Speed&quot;</span>, <span class="dt">levels=</span><span class="kw">c</span>(<span class="st">&quot;slow&quot;</span>, <span class="st">&quot;medium&quot;</span>, <span class="st">&quot;fast&quot;</span>)) <span class="op">+</span></span>
-<span id="cb2-3"><a href="#cb2-3"></a><span class="st">  </span><span class="kw">fixed.factor</span>(<span class="st">&quot;Load&quot;</span>,  <span class="dt">levels=</span><span class="kw">c</span>(<span class="st">&quot;yes&quot;</span>, <span class="st">&quot;no&quot;</span>)) <span class="op">+</span></span>
-<span id="cb2-4"><a href="#cb2-4"></a><span class="st">  </span><span class="kw">random.factor</span>(<span class="st">&quot;Subj&quot;</span>, <span class="dt">instances=</span><span class="dv">6</span>) <span class="op">+</span><span class="st">    </span></span>
-<span id="cb2-5"><a href="#cb2-5"></a><span class="st">  </span><span class="kw">random.factor</span>(<span class="st">&quot;Item&quot;</span>, <span class="dt">instances=</span><span class="dv">6</span>)    </span>
-<span id="cb2-6"><a href="#cb2-6"></a></span>
-<span id="cb2-7"><a href="#cb2-7"></a></span>
-<span id="cb2-8"><a href="#cb2-8"></a>codes1 &lt;-<span class="st"> </span><span class="kw">arrange</span>(<span class="kw">design.codes</span>(design1), Subj, Item)[<span class="kw">c</span>(<span class="dv">3</span>, <span class="dv">4</span>, <span class="dv">2</span>, <span class="dv">1</span>)]</span>
-<span id="cb2-9"><a href="#cb2-9"></a>codes1</span></code></pre></div>
-<pre><code>## # A tibble: 216 x 4
+<p>This is a completely crossed design. Note the difference between
+specification of levels for fixed and instances for random factors. The
+product of numbers in the formula informs about the number of
+observations generated by the design. In this case: <strong>216
+observations</strong>.</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>design1 <span class="ot">&lt;-</span> </span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">fixed.factor</span>(<span class="st">&quot;Speed&quot;</span>, <span class="at">levels=</span><span class="fu">c</span>(<span class="st">&quot;slow&quot;</span>, <span class="st">&quot;medium&quot;</span>, <span class="st">&quot;fast&quot;</span>)) <span class="sc">+</span></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">fixed.factor</span>(<span class="st">&quot;Load&quot;</span>,  <span class="at">levels=</span><span class="fu">c</span>(<span class="st">&quot;yes&quot;</span>, <span class="st">&quot;no&quot;</span>)) <span class="sc">+</span></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">random.factor</span>(<span class="st">&quot;Subj&quot;</span>, <span class="at">instances=</span><span class="dv">6</span>) <span class="sc">+</span>    </span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">random.factor</span>(<span class="st">&quot;Item&quot;</span>, <span class="at">instances=</span><span class="dv">6</span>)    </span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>codes1 <span class="ot">&lt;-</span> <span class="fu">arrange</span>(<span class="fu">design.codes</span>(design1), Subj, Item)[<span class="fu">c</span>(<span class="dv">3</span>, <span class="dv">4</span>, <span class="dv">2</span>, <span class="dv">1</span>)]</span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>codes1</span></code></pre></div>
+<pre><code>## # A tibble: 216 × 4
 ##    Speed  Load  Item  Subj 
 ##    &lt;fct&gt;  &lt;fct&gt; &lt;fct&gt; &lt;fct&gt;
 ##  1 slow   yes   Item1 Subj1
@@ -392,9 +442,9 @@ code > span.er { color: #a61717; background-color: #e3d2d2; }
 ##  8 medium yes   Item2 Subj1
 ##  9 fast   yes   Item2 Subj1
 ## 10 slow   no    Item2 Subj1
-## # … with 206 more rows</code></pre>
-<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1"></a><span class="kw">tail</span>(codes1, <span class="dv">10</span>)</span></code></pre></div>
-<pre><code>## # A tibble: 10 x 4
+## # ℹ 206 more rows</code></pre>
+<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="fu">tail</span>(codes1, <span class="dv">10</span>)</span></code></pre></div>
+<pre><code>## # A tibble: 10 × 4
 ##    Speed  Load  Item  Subj 
 ##    &lt;fct&gt;  &lt;fct&gt; &lt;fct&gt; &lt;fct&gt;
 ##  1 fast   yes   Item5 Subj6
@@ -407,13 +457,13 @@ code > span.er { color: #a61717; background-color: #e3d2d2; }
 ##  8 slow   no    Item6 Subj6
 ##  9 medium no    Item6 Subj6
 ## 10 fast   no    Item6 Subj6</code></pre>
-<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1"></a><span class="co">#xtabs( ~ Subj + Item + Load + Speed, codes1)</span></span>
-<span id="cb6-2"><a href="#cb6-2"></a><span class="kw">xtabs</span>(<span class="op">~</span><span class="st"> </span>Load <span class="op">+</span><span class="st"> </span>Speed, codes1)</span></code></pre></div>
+<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="co">#xtabs( ~ Subj + Item + Load + Speed, codes1)</span></span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a><span class="fu">xtabs</span>(<span class="sc">~</span> Load <span class="sc">+</span> Speed, codes1)</span></code></pre></div>
 <pre><code>##      Speed
 ## Load  slow medium fast
 ##   yes   36     36   36
 ##   no    36     36   36</code></pre>
-<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1"></a><span class="kw">xtabs</span>(<span class="op">~</span><span class="st"> </span>Subj <span class="op">+</span><span class="st"> </span>Load <span class="op">+</span><span class="st"> </span>Speed, codes1)</span></code></pre></div>
+<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="fu">xtabs</span>(<span class="sc">~</span> Subj <span class="sc">+</span> Load <span class="sc">+</span> Speed, codes1)</span></code></pre></div>
 <pre><code>## , , Speed = slow
 ## 
 ##        Load
@@ -446,7 +496,7 @@ code > span.er { color: #a61717; background-color: #e3d2d2; }
 ##   Subj4   6  6
 ##   Subj5   6  6
 ##   Subj6   6  6</code></pre>
-<div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1"></a><span class="kw">xtabs</span>(<span class="op">~</span><span class="st"> </span>Item <span class="op">+</span><span class="st"> </span>Load <span class="op">+</span><span class="st"> </span>Speed, codes1)</span></code></pre></div>
+<div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="fu">xtabs</span>(<span class="sc">~</span> Item <span class="sc">+</span> Load <span class="sc">+</span> Speed, codes1)</span></code></pre></div>
 <pre><code>## , , Speed = slow
 ## 
 ##        Load
@@ -479,23 +529,45 @@ code > span.er { color: #a61717; background-color: #e3d2d2; }
 ##   Item4   6  6
 ##   Item5   6  6
 ##   Item6   6  6</code></pre>
-<p>The first command generates the list <code>design1</code>. The function <code>design.codes()</code> extracts the generated variable coding as a dataframe in the tibble format. After resorting and rearranging the variables, the code is converted to the long format (i.e, N=216). Obviously, having subjects read each text six times may lead to practice effects that would need to be taken into account by counterbalancing the order in which texts are presented across subjects.</p>
+<p>The first command generates the list <code>design1</code>. The
+function <code>design.codes()</code> extracts the generated variable
+coding as a dataframe in the tibble format. After resorting and
+rearranging the variables, the code is converted to the long format
+(i.e, N=216). Obviously, having subjects read each text six times may
+lead to practice effects that would need to be taken into account by
+counterbalancing the order in which texts are presented across
+subjects.</p>
 </div>
-<div id="speed-within-subjectwithin-item-text-within-subjectbetween-item-no-counterbalancing" class="section level2">
-<h2><span class="header-section-number">2.2</span> <em>Speed</em> within-subject/within-item, <em>Text</em> within-subject/between-item; no counterbalancing</h2>
-<p>In the second example, we replace the factor <em>Load</em> with a factor <em>Type</em> of text. We assume that Items 1 to 3 are simple texts and items 4 to 6 are complex texts. Subjects read both simple and complex texts; <em>Type</em> of text is a within-subject factor. Each text (item), however is either simple or complex. Thus, <em>Type</em> is a between-item factor in this design.</p>
-<p>Such a design is realized by specifying <em>Type</em> with the <em>groups</em> argument in the corresponding <em>random.factor()</em> command. We generate 3 items (<em>instances</em>) within each of the two levels of the factor <em>Type</em>, that is, as in the first example, we will have again six different items.</p>
+<div id="speed-within-subjectwithin-item-text-within-subjectbetween-item-no-counterbalancing" class="section level2" number="2.2">
+<h2><span class="header-section-number">2.2</span> <em>Speed</em>
+within-subject/within-item, <em>Text</em> within-subject/between-item;
+no counterbalancing</h2>
+<p>In the second example, we replace the factor <em>Load</em> with a
+factor <em>Type</em> of text. We assume that Items 1 to 3 are simple
+texts and items 4 to 6 are complex texts. Subjects read both simple and
+complex texts; <em>Type</em> of text is a within-subject factor. Each
+text (item), however is either simple or complex. Thus, <em>Type</em> is
+a between-item factor in this design.</p>
+<p>Such a design is realized by specifying <em>Type</em> with the
+<em>groups</em> argument in the corresponding <em>random.factor()</em>
+command. We generate 3 items (<em>instances</em>) within each of the two
+levels of the factor <em>Type</em>, that is, as in the first example, we
+will have again six different items.</p>
 <p><strong>Design formula:</strong></p>
 <pre><code>Type(2) x Speed(3) x 3 Item[Type] x 6 Subj</code></pre>
-<p>We read the item-part of this formula: “3 Items nested under levels of Type.” The total number of different instances for the random factor <em>Item</em> is 3 items x 2 levels of <em>Type</em>, that is 6 items. The design generates <strong>108 observations</strong>; it is no longer completely crossed.</p>
-<div class="sourceCode" id="cb13"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1"></a>design2 &lt;-<span class="st"> </span><span class="kw">fixed.factor</span>(<span class="st">&quot;Speed&quot;</span>, <span class="dt">levels=</span><span class="kw">c</span>(<span class="st">&quot;slow&quot;</span>, <span class="st">&quot;medium&quot;</span>, <span class="st">&quot;fast&quot;</span>)) <span class="op">+</span></span>
-<span id="cb13-2"><a href="#cb13-2"></a><span class="st">  </span><span class="kw">fixed.factor</span>(<span class="st">&quot;Type&quot;</span>,  <span class="dt">levels=</span><span class="kw">c</span>(<span class="st">&quot;simple&quot;</span>, <span class="st">&quot;complex&quot;</span>)) <span class="op">+</span></span>
-<span id="cb13-3"><a href="#cb13-3"></a><span class="st">  </span><span class="kw">random.factor</span>(<span class="st">&quot;Subj&quot;</span>, <span class="dt">instances=</span><span class="dv">6</span>) <span class="op">+</span><span class="st">   </span></span>
-<span id="cb13-4"><a href="#cb13-4"></a><span class="st">  </span><span class="kw">random.factor</span>(<span class="st">&quot;Item&quot;</span>, <span class="dt">groups=</span><span class="st">&quot;Type&quot;</span>, <span class="dt">instances=</span><span class="dv">3</span>)</span>
-<span id="cb13-5"><a href="#cb13-5"></a></span>
-<span id="cb13-6"><a href="#cb13-6"></a>codes2 &lt;-<span class="st"> </span><span class="kw">arrange</span>(<span class="kw">design.codes</span>(design2), Subj, Item)[<span class="kw">c</span>(<span class="dv">3</span>, <span class="dv">4</span>, <span class="dv">1</span>, <span class="dv">2</span>)]</span>
-<span id="cb13-7"><a href="#cb13-7"></a>codes2</span></code></pre></div>
-<pre><code>## # A tibble: 108 x 4
+<p>We read the item-part of this formula: “3 Items nested under levels
+of Type.” The total number of different instances for the random factor
+<em>Item</em> is 3 items x 2 levels of <em>Type</em>, that is 6 items.
+The design generates <strong>108 observations</strong>; it is no longer
+completely crossed.</p>
+<div class="sourceCode" id="cb13"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>design2 <span class="ot">&lt;-</span> <span class="fu">fixed.factor</span>(<span class="st">&quot;Speed&quot;</span>, <span class="at">levels=</span><span class="fu">c</span>(<span class="st">&quot;slow&quot;</span>, <span class="st">&quot;medium&quot;</span>, <span class="st">&quot;fast&quot;</span>)) <span class="sc">+</span></span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">fixed.factor</span>(<span class="st">&quot;Type&quot;</span>,  <span class="at">levels=</span><span class="fu">c</span>(<span class="st">&quot;simple&quot;</span>, <span class="st">&quot;complex&quot;</span>)) <span class="sc">+</span></span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">random.factor</span>(<span class="st">&quot;Subj&quot;</span>, <span class="at">instances=</span><span class="dv">6</span>) <span class="sc">+</span>   </span>
+<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">random.factor</span>(<span class="st">&quot;Item&quot;</span>, <span class="at">groups=</span><span class="st">&quot;Type&quot;</span>, <span class="at">instances=</span><span class="dv">3</span>)</span>
+<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a>codes2 <span class="ot">&lt;-</span> <span class="fu">arrange</span>(<span class="fu">design.codes</span>(design2), Subj, Item)[<span class="fu">c</span>(<span class="dv">3</span>, <span class="dv">4</span>, <span class="dv">1</span>, <span class="dv">2</span>)]</span>
+<span id="cb13-7"><a href="#cb13-7" aria-hidden="true" tabindex="-1"></a>codes2</span></code></pre></div>
+<pre><code>## # A tibble: 108 × 4
 ##    Speed  Type    Subj  Item 
 ##    &lt;fct&gt;  &lt;fct&gt;   &lt;fct&gt; &lt;fct&gt;
 ##  1 slow   complex Subj1 Item1
@@ -508,8 +580,8 @@ code > span.er { color: #a61717; background-color: #e3d2d2; }
 ##  8 medium complex Subj1 Item3
 ##  9 fast   complex Subj1 Item3
 ## 10 slow   simple  Subj1 Item4
-## # … with 98 more rows</code></pre>
-<div class="sourceCode" id="cb15"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1"></a><span class="kw">xtabs</span>(<span class="op">~</span><span class="st"> </span>Item <span class="op">+</span><span class="st"> </span>Type, codes2)</span></code></pre></div>
+## # ℹ 98 more rows</code></pre>
+<div class="sourceCode" id="cb15"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="fu">xtabs</span>(<span class="sc">~</span> Item <span class="sc">+</span> Type, codes2)</span></code></pre></div>
 <pre><code>##        Type
 ## Item    simple complex
 ##   Item1      0      18
@@ -518,7 +590,7 @@ code > span.er { color: #a61717; background-color: #e3d2d2; }
 ##   Item4     18       0
 ##   Item5     18       0
 ##   Item6     18       0</code></pre>
-<div class="sourceCode" id="cb17"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1"></a><span class="kw">xtabs</span>(<span class="op">~</span><span class="st"> </span>Subj <span class="op">+</span><span class="st"> </span>Type, codes2)</span></code></pre></div>
+<div class="sourceCode" id="cb17"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="fu">xtabs</span>(<span class="sc">~</span> Subj <span class="sc">+</span> Type, codes2)</span></code></pre></div>
 <pre><code>##        Type
 ## Subj    simple complex
 ##   Subj1      9       9
@@ -527,13 +599,23 @@ code > span.er { color: #a61717; background-color: #e3d2d2; }
 ##   Subj4      9       9
 ##   Subj5      9       9
 ##   Subj6      9       9</code></pre>
-<div class="sourceCode" id="cb19"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1"></a><span class="co">#xtabs( ~ Subj + Item + Type + Speed, codes2)</span></span>
-<span id="cb19-2"><a href="#cb19-2"></a><span class="co">#xtabs(~ Type + Speed, codes2)</span></span>
-<span id="cb19-3"><a href="#cb19-3"></a><span class="co">#xtabs(~ Subj + Type + Speed, codes2)</span></span>
-<span id="cb19-4"><a href="#cb19-4"></a><span class="co">#xtabs(~ Item + Type + Speed, codes2)</span></span></code></pre></div>
-<p>The tables shows that for Items 1 to 3 all available codes for the factor <em>Type</em> are <em>complex</em> and for Items 4 to 6 all codes are <em>simple</em>. Thus, <em>Type</em> is varied between items. Each item is read three times (three levels of <em>Speed</em>) by six subjects. yielding 18 codes in each of the 6 non-zero cells of the <em>Item</em> x <em>Type</em> table.</p>
-<p>Conversely, for all six subjects codes are available for <em>simple</em> and <em>complex</em> items. Thus, <em>Type</em> is varied within subjects. Each text is read three times (i.e., the three speed rates). Therefore, there are 3 texts x 3 levels of speed = 9 codes in each cell of the <em>Subj</em> x <em>Type</em> table.</p>
-<p>The command to specify <em>Speed</em> as between_item factor would be:</p>
+<div class="sourceCode" id="cb19"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="co">#xtabs( ~ Subj + Item + Type + Speed, codes2)</span></span>
+<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a><span class="co">#xtabs(~ Type + Speed, codes2)</span></span>
+<span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a><span class="co">#xtabs(~ Subj + Type + Speed, codes2)</span></span>
+<span id="cb19-4"><a href="#cb19-4" aria-hidden="true" tabindex="-1"></a><span class="co">#xtabs(~ Item + Type + Speed, codes2)</span></span></code></pre></div>
+<p>The tables shows that for Items 1 to 3 all available codes for the
+factor <em>Type</em> are <em>complex</em> and for Items 4 to 6 all codes
+are <em>simple</em>. Thus, <em>Type</em> is varied between items. Each
+item is read three times (three levels of <em>Speed</em>) by six
+subjects. yielding 18 codes in each of the 6 non-zero cells of the
+<em>Item</em> x <em>Type</em> table.</p>
+<p>Conversely, for all six subjects codes are available for
+<em>simple</em> and <em>complex</em> items. Thus, <em>Type</em> is
+varied within subjects. Each text is read three times (i.e., the three
+speed rates). Therefore, there are 3 texts x 3 levels of speed = 9 codes
+in each cell of the <em>Subj</em> x <em>Type</em> table.</p>
+<p>The command to specify <em>Speed</em> as between_item factor would
+be:</p>
 <pre><code>random.factor(&quot;Item&quot;, groups=&quot;Speed&quot;, instances=2)
 ```
 We need 2 instances within each of the 3 levels of _Speed_ to obtain 6 items in total. 
@@ -541,20 +623,25 @@ We need 2 instances within each of the 3 levels of _Speed_ to obtain 6 items in 
 **Design formula:**
 ```
 Type(2) x Speed(3) x 2 Item[Speed] x 6 Subj</code></pre>
-<p>The total number of items is 2 x 3 = 6. This design generates <strong>72 observations</strong>.</p>
+<p>The total number of items is 2 x 3 = 6. This design generates
+<strong>72 observations</strong>.</p>
 </div>
-<div id="age-between-subjectwithin-item-speed-within-subjectwithin-item-no-counterbalancing" class="section level2">
-<h2><span class="header-section-number">2.3</span> <em>Age</em> between-subject/within-item, <em>Speed</em> within-subject/within-item; no counterbalancing</h2>
-<p>In this example, we replace the factor <em>Load</em> (or <em>Type</em>) with a between-subject factor <em>Age</em>, assuming that half the subjects are young and the other half old.</p>
-<div class="sourceCode" id="cb21"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1"></a>design3 &lt;-<span class="st"> </span></span>
-<span id="cb21-2"><a href="#cb21-2"></a><span class="st">  </span><span class="kw">fixed.factor</span>(<span class="st">&quot;Speed&quot;</span>, <span class="dt">levels=</span><span class="kw">c</span>(<span class="st">&quot;slow&quot;</span>, <span class="st">&quot;medium&quot;</span>, <span class="st">&quot;fast&quot;</span>)) <span class="op">+</span></span>
-<span id="cb21-3"><a href="#cb21-3"></a><span class="st">  </span><span class="kw">fixed.factor</span>(<span class="st">&quot;Age&quot;</span>,  <span class="dt">levels=</span><span class="kw">c</span>(<span class="st">&quot;young&quot;</span>, <span class="st">&quot;old&quot;</span>)) <span class="op">+</span></span>
-<span id="cb21-4"><a href="#cb21-4"></a><span class="st">  </span><span class="kw">random.factor</span>(<span class="st">&quot;Item&quot;</span>, <span class="dt">instances=</span><span class="dv">6</span>) <span class="op">+</span></span>
-<span id="cb21-5"><a href="#cb21-5"></a><span class="st">  </span><span class="kw">random.factor</span>(<span class="st">&quot;Subj&quot;</span>, <span class="dt">groups=</span><span class="st">&quot;Age&quot;</span>, <span class="dt">instances=</span><span class="dv">3</span>) </span>
-<span id="cb21-6"><a href="#cb21-6"></a></span>
-<span id="cb21-7"><a href="#cb21-7"></a>codes3 &lt;-<span class="st"> </span><span class="kw">arrange</span>(<span class="kw">design.codes</span>(design3), Subj, Item)[<span class="kw">c</span>(<span class="dv">4</span>, <span class="dv">3</span>, <span class="dv">2</span>, <span class="dv">1</span>)]</span>
-<span id="cb21-8"><a href="#cb21-8"></a>codes3</span></code></pre></div>
-<pre><code>## # A tibble: 108 x 4
+<div id="age-between-subjectwithin-item-speed-within-subjectwithin-item-no-counterbalancing" class="section level2" number="2.3">
+<h2><span class="header-section-number">2.3</span> <em>Age</em>
+between-subject/within-item, <em>Speed</em> within-subject/within-item;
+no counterbalancing</h2>
+<p>In this example, we replace the factor <em>Load</em> (or
+<em>Type</em>) with a between-subject factor <em>Age</em>, assuming that
+half the subjects are young and the other half old.</p>
+<div class="sourceCode" id="cb21"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a>design3 <span class="ot">&lt;-</span> </span>
+<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">fixed.factor</span>(<span class="st">&quot;Speed&quot;</span>, <span class="at">levels=</span><span class="fu">c</span>(<span class="st">&quot;slow&quot;</span>, <span class="st">&quot;medium&quot;</span>, <span class="st">&quot;fast&quot;</span>)) <span class="sc">+</span></span>
+<span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">fixed.factor</span>(<span class="st">&quot;Age&quot;</span>,  <span class="at">levels=</span><span class="fu">c</span>(<span class="st">&quot;young&quot;</span>, <span class="st">&quot;old&quot;</span>)) <span class="sc">+</span></span>
+<span id="cb21-4"><a href="#cb21-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">random.factor</span>(<span class="st">&quot;Item&quot;</span>, <span class="at">instances=</span><span class="dv">6</span>) <span class="sc">+</span></span>
+<span id="cb21-5"><a href="#cb21-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">random.factor</span>(<span class="st">&quot;Subj&quot;</span>, <span class="at">groups=</span><span class="st">&quot;Age&quot;</span>, <span class="at">instances=</span><span class="dv">3</span>) </span>
+<span id="cb21-6"><a href="#cb21-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-7"><a href="#cb21-7" aria-hidden="true" tabindex="-1"></a>codes3 <span class="ot">&lt;-</span> <span class="fu">arrange</span>(<span class="fu">design.codes</span>(design3), Subj, Item)[<span class="fu">c</span>(<span class="dv">4</span>, <span class="dv">3</span>, <span class="dv">2</span>, <span class="dv">1</span>)]</span>
+<span id="cb21-8"><a href="#cb21-8" aria-hidden="true" tabindex="-1"></a>codes3</span></code></pre></div>
+<pre><code>## # A tibble: 108 × 4
 ##    Age   Speed  Subj  Item 
 ##    &lt;fct&gt; &lt;fct&gt;  &lt;fct&gt; &lt;fct&gt;
 ##  1 old   slow   Subj1 Item1
@@ -567,8 +654,8 @@ Type(2) x Speed(3) x 2 Item[Speed] x 6 Subj</code></pre>
 ##  8 old   medium Subj1 Item3
 ##  9 old   fast   Subj1 Item3
 ## 10 old   fast   Subj1 Item4
-## # … with 98 more rows</code></pre>
-<div class="sourceCode" id="cb23"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1"></a><span class="kw">xtabs</span>(<span class="op">~</span><span class="st"> </span>Subj <span class="op">+</span><span class="st"> </span>Age, codes3)</span></code></pre></div>
+## # ℹ 98 more rows</code></pre>
+<div class="sourceCode" id="cb23"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="fu">xtabs</span>(<span class="sc">~</span> Subj <span class="sc">+</span> Age, codes3)</span></code></pre></div>
 <pre><code>##        Age
 ## Subj    young old
 ##   Subj1     0  18
@@ -577,7 +664,7 @@ Type(2) x Speed(3) x 2 Item[Speed] x 6 Subj</code></pre>
 ##   Subj4    18   0
 ##   Subj5    18   0
 ##   Subj6    18   0</code></pre>
-<div class="sourceCode" id="cb25"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1"></a><span class="kw">xtabs</span>(<span class="op">~</span><span class="st"> </span>Item <span class="op">+</span><span class="st"> </span>Age, codes3)</span></code></pre></div>
+<div class="sourceCode" id="cb25"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a><span class="fu">xtabs</span>(<span class="sc">~</span> Item <span class="sc">+</span> Age, codes3)</span></code></pre></div>
 <pre><code>##        Age
 ## Item    young old
 ##   Item1     9   9
@@ -586,29 +673,51 @@ Type(2) x Speed(3) x 2 Item[Speed] x 6 Subj</code></pre>
 ##   Item4     9   9
 ##   Item5     9   9
 ##   Item6     9   9</code></pre>
-<div class="sourceCode" id="cb27"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb27-1"><a href="#cb27-1"></a><span class="co">#xtabs( ~ Subj + Item + Age + Speed, codes3)</span></span>
-<span id="cb27-2"><a href="#cb27-2"></a><span class="co">#xtabs( ~ Subj + Age + Speed, codes3)</span></span></code></pre></div>
-<p>The tables show that subjects 1 to 3 are <em>old</em> and subjects 4 to 6 are <em>young</em> (i.e., <em>Age</em> is a between-subject factor) and that all items are read by young and old subjects (i.e., <em>Age</em> is a within-item factor). The formula for this design can be written as: Age(2) x Speed(3) x 6 Item x 3 Subj[Age], yielding <strong>108 observations</strong>.</p>
-<p>Note that <em>instances</em> specifies the number of instances within <em>groups</em>. To generate code for 25 young and 25 old subjects (i.e., total N=50), we set <code>instances=25</code>.</p>
+<div class="sourceCode" id="cb27"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a><span class="co">#xtabs( ~ Subj + Item + Age + Speed, codes3)</span></span>
+<span id="cb27-2"><a href="#cb27-2" aria-hidden="true" tabindex="-1"></a><span class="co">#xtabs( ~ Subj + Age + Speed, codes3)</span></span></code></pre></div>
+<p>The tables show that subjects 1 to 3 are <em>old</em> and subjects 4
+to 6 are <em>young</em> (i.e., <em>Age</em> is a between-subject factor)
+and that all items are read by young and old subjects (i.e.,
+<em>Age</em> is a within-item factor). The formula for this design can
+be written as: Age(2) x Speed(3) x 6 Item x 3 Subj[Age], yielding
+<strong>108 observations</strong>.</p>
+<p>Note that <em>instances</em> specifies the number of instances within
+<em>groups</em>. To generate code for 25 young and 25 old subjects
+(i.e., total N=50), we set <code>instances=25</code>.</p>
 <p><strong>Design formula:</strong></p>
 <pre><code>Age(2) x Speed(3) x 6 Item x 25 Subj[Age] </code></pre>
-<p>The total number of subjects is 25 x 2 = 50. This design generates <strong>900 observations</strong>.</p>
+<p>The total number of subjects is 25 x 2 = 50. This design generates
+<strong>900 observations</strong>.</p>
 </div>
-<div id="age-between-subjectwithin-item-speed-between-subjectwithin-item-no-counterbalancing" class="section level2">
-<h2><span class="header-section-number">2.4</span> <em>Age</em> between-subject/within-item, <em>Speed</em> between-subject/within-item; no counterbalancing</h2>
-<p>Continuing with the last example, it may also make sense to vary not only <em>Age</em>, but als <em>Speed</em> between subjects. Thus, every subject is either <em>old</em> or <em>young</em> (i.e., a quasi-experimental factor) and is randomly assigned to one of the three <em>Speed</em> conditions (i.e., an experimental factor). For this specification the two factors are included as a vector for the <code>groups</code> argument. For the minimal design we need only 1 instance because 2 x 3 = 6. This means we generate codes for 1 subject in each of the six design cells, but each subjects reads each text in this condition (i.e., there are six measures for each subject.) To get code for 10 subjects in each of the 2 x 3 = 6 design cells (i.e., a total of 60 subjects), we set <code>instances=10</code>.</p>
+<div id="age-between-subjectwithin-item-speed-between-subjectwithin-item-no-counterbalancing" class="section level2" number="2.4">
+<h2><span class="header-section-number">2.4</span> <em>Age</em>
+between-subject/within-item, <em>Speed</em> between-subject/within-item;
+no counterbalancing</h2>
+<p>Continuing with the last example, it may also make sense to vary not
+only <em>Age</em>, but als <em>Speed</em> between subjects. Thus, every
+subject is either <em>old</em> or <em>young</em> (i.e., a
+quasi-experimental factor) and is randomly assigned to one of the three
+<em>Speed</em> conditions (i.e., an experimental factor). For this
+specification the two factors are included as a vector for the
+<code>groups</code> argument. For the minimal design we need only 1
+instance because 2 x 3 = 6. This means we generate codes for 1 subject
+in each of the six design cells, but each subjects reads each text in
+this condition (i.e., there are six measures for each subject.) To get
+code for 10 subjects in each of the 2 x 3 = 6 design cells (i.e., a
+total of 60 subjects), we set <code>instances=10</code>.</p>
 <p><strong>Design formula:</strong></p>
 <pre><code>Age(2) x Speed(3) x 6 Item x 10 Subj[Age x Speed]</code></pre>
-<p>The total number of subjects is 10 x 2 x 3 = 60. This design generates <strong>360 observations</strong>.</p>
-<div class="sourceCode" id="cb30"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb30-1"><a href="#cb30-1"></a>design4 &lt;-<span class="st"> </span></span>
-<span id="cb30-2"><a href="#cb30-2"></a><span class="st">  </span><span class="kw">fixed.factor</span>(<span class="st">&quot;Speed&quot;</span>, <span class="dt">levels=</span><span class="kw">c</span>(<span class="st">&quot;slow&quot;</span>, <span class="st">&quot;medium&quot;</span>, <span class="st">&quot;fast&quot;</span>)) <span class="op">+</span></span>
-<span id="cb30-3"><a href="#cb30-3"></a><span class="st">  </span><span class="kw">fixed.factor</span>(<span class="st">&quot;Age&quot;</span>,  <span class="dt">levels=</span><span class="kw">c</span>(<span class="st">&quot;simple&quot;</span>, <span class="st">&quot;complex&quot;</span>)) <span class="op">+</span></span>
-<span id="cb30-4"><a href="#cb30-4"></a><span class="st">  </span><span class="kw">random.factor</span>(<span class="st">&quot;Subj&quot;</span>, <span class="dt">groups=</span><span class="kw">c</span>(<span class="st">&quot;Age&quot;</span>, <span class="st">&quot;Speed&quot;</span>), <span class="dt">instances=</span><span class="dv">10</span>) <span class="op">+</span></span>
-<span id="cb30-5"><a href="#cb30-5"></a><span class="st">  </span><span class="kw">random.factor</span>(<span class="st">&quot;Item&quot;</span>, <span class="dt">instances=</span><span class="dv">6</span>)   </span>
-<span id="cb30-6"><a href="#cb30-6"></a></span>
-<span id="cb30-7"><a href="#cb30-7"></a>codes4 &lt;-<span class="st"> </span><span class="kw">arrange</span>(<span class="kw">design.codes</span>(design4), Subj, Item)[<span class="kw">c</span>(<span class="dv">3</span>, <span class="dv">4</span>, <span class="dv">2</span>, <span class="dv">1</span>)]</span>
-<span id="cb30-8"><a href="#cb30-8"></a>codes4</span></code></pre></div>
-<pre><code>## # A tibble: 360 x 4
+<p>The total number of subjects is 10 x 2 x 3 = 60. This design
+generates <strong>360 observations</strong>.</p>
+<div class="sourceCode" id="cb30"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a>design4 <span class="ot">&lt;-</span> </span>
+<span id="cb30-2"><a href="#cb30-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">fixed.factor</span>(<span class="st">&quot;Speed&quot;</span>, <span class="at">levels=</span><span class="fu">c</span>(<span class="st">&quot;slow&quot;</span>, <span class="st">&quot;medium&quot;</span>, <span class="st">&quot;fast&quot;</span>)) <span class="sc">+</span></span>
+<span id="cb30-3"><a href="#cb30-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">fixed.factor</span>(<span class="st">&quot;Age&quot;</span>,  <span class="at">levels=</span><span class="fu">c</span>(<span class="st">&quot;simple&quot;</span>, <span class="st">&quot;complex&quot;</span>)) <span class="sc">+</span></span>
+<span id="cb30-4"><a href="#cb30-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">random.factor</span>(<span class="st">&quot;Subj&quot;</span>, <span class="at">groups=</span><span class="fu">c</span>(<span class="st">&quot;Age&quot;</span>, <span class="st">&quot;Speed&quot;</span>), <span class="at">instances=</span><span class="dv">10</span>) <span class="sc">+</span></span>
+<span id="cb30-5"><a href="#cb30-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">random.factor</span>(<span class="st">&quot;Item&quot;</span>, <span class="at">instances=</span><span class="dv">6</span>)   </span>
+<span id="cb30-6"><a href="#cb30-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb30-7"><a href="#cb30-7" aria-hidden="true" tabindex="-1"></a>codes4 <span class="ot">&lt;-</span> <span class="fu">arrange</span>(<span class="fu">design.codes</span>(design4), Subj, Item)[<span class="fu">c</span>(<span class="dv">3</span>, <span class="dv">4</span>, <span class="dv">2</span>, <span class="dv">1</span>)]</span>
+<span id="cb30-8"><a href="#cb30-8" aria-hidden="true" tabindex="-1"></a>codes4</span></code></pre></div>
+<pre><code>## # A tibble: 360 × 4
 ##    Speed Age     Item  Subj  
 ##    &lt;fct&gt; &lt;fct&gt;   &lt;fct&gt; &lt;fct&gt; 
 ##  1 fast  complex Item1 Subj01
@@ -621,8 +730,8 @@ Type(2) x Speed(3) x 2 Item[Speed] x 6 Subj</code></pre>
 ##  8 fast  complex Item2 Subj02
 ##  9 fast  complex Item3 Subj02
 ## 10 fast  complex Item4 Subj02
-## # … with 350 more rows</code></pre>
-<div class="sourceCode" id="cb32"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb32-1"><a href="#cb32-1"></a><span class="kw">xtabs</span>( <span class="op">~</span><span class="st"> </span>Subj <span class="op">+</span><span class="st"> </span>Age, codes4)</span></code></pre></div>
+## # ℹ 350 more rows</code></pre>
+<div class="sourceCode" id="cb32"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a><span class="fu">xtabs</span>( <span class="sc">~</span> Subj <span class="sc">+</span> Age, codes4)</span></code></pre></div>
 <pre><code>##         Age
 ## Subj     simple complex
 ##   Subj01      0       6
@@ -685,7 +794,7 @@ Type(2) x Speed(3) x 2 Item[Speed] x 6 Subj</code></pre>
 ##   Subj58      6       0
 ##   Subj59      6       0
 ##   Subj60      6       0</code></pre>
-<div class="sourceCode" id="cb34"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb34-1"><a href="#cb34-1"></a><span class="kw">xtabs</span>( <span class="op">~</span><span class="st"> </span>Subj <span class="op">+</span><span class="st"> </span>Speed, codes4)</span></code></pre></div>
+<div class="sourceCode" id="cb34"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true" tabindex="-1"></a><span class="fu">xtabs</span>( <span class="sc">~</span> Subj <span class="sc">+</span> Speed, codes4)</span></code></pre></div>
 <pre><code>##         Speed
 ## Subj     slow medium fast
 ##   Subj01    0      0    6
@@ -748,7 +857,7 @@ Type(2) x Speed(3) x 2 Item[Speed] x 6 Subj</code></pre>
 ##   Subj58    6      0    0
 ##   Subj59    6      0    0
 ##   Subj60    6      0    0</code></pre>
-<div class="sourceCode" id="cb36"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb36-1"><a href="#cb36-1"></a><span class="kw">xtabs</span>( <span class="op">~</span><span class="st"> </span>Item <span class="op">+</span><span class="st"> </span>Age, codes4)</span></code></pre></div>
+<div class="sourceCode" id="cb36"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb36-1"><a href="#cb36-1" aria-hidden="true" tabindex="-1"></a><span class="fu">xtabs</span>( <span class="sc">~</span> Item <span class="sc">+</span> Age, codes4)</span></code></pre></div>
 <pre><code>##        Age
 ## Item    simple complex
 ##   Item1     30      30
@@ -757,7 +866,7 @@ Type(2) x Speed(3) x 2 Item[Speed] x 6 Subj</code></pre>
 ##   Item4     30      30
 ##   Item5     30      30
 ##   Item6     30      30</code></pre>
-<div class="sourceCode" id="cb38"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb38-1"><a href="#cb38-1"></a><span class="kw">xtabs</span>( <span class="op">~</span><span class="st"> </span>Item <span class="op">+</span><span class="st"> </span>Speed, codes4)</span></code></pre></div>
+<div class="sourceCode" id="cb38"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb38-1"><a href="#cb38-1" aria-hidden="true" tabindex="-1"></a><span class="fu">xtabs</span>( <span class="sc">~</span> Item <span class="sc">+</span> Speed, codes4)</span></code></pre></div>
 <pre><code>##        Speed
 ## Item    slow medium fast
 ##   Item1   20     20   20
@@ -766,30 +875,42 @@ Type(2) x Speed(3) x 2 Item[Speed] x 6 Subj</code></pre>
 ##   Item4   20     20   20
 ##   Item5   20     20   20
 ##   Item6   20     20   20</code></pre>
-<div class="sourceCode" id="cb40"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb40-1"><a href="#cb40-1"></a><span class="co">#xtabs( ~ Subj + Item + Age + Speed, codes4)</span></span></code></pre></div>
-<p>The tables show that <em>Age</em> and <em>Speed</em> vary indeed between subjects and within items.</p>
+<div class="sourceCode" id="cb40"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb40-1"><a href="#cb40-1" aria-hidden="true" tabindex="-1"></a><span class="co">#xtabs( ~ Subj + Item + Age + Speed, codes4)</span></span></code></pre></div>
+<p>The tables show that <em>Age</em> and <em>Speed</em> vary indeed
+between subjects and within items.</p>
 </div>
 </div>
-<div id="counterbalancing-speed-and-load" class="section level1">
-<h1><span class="header-section-number">3</span> Counterbalancing <em>Speed</em> and <em>Load</em></h1>
-<p>In this final example, we modify the very first example such that each subject reads one different texts in each of the six conditions, respecting the constraint that design cells are counterbalanced (i.e., each text is read equally often in each condition, each subject reads the same number of texts in each condition).</p>
-<p>For this implementation we (1) add a third random factor defined as <em>Subj-by-Item</em> and (2) specify factors <em>Speed</em> and <em>Load</em> as varying between <em>Subj-by-Item</em>.</p>
+<div id="counterbalancing-speed-and-load" class="section level1" number="3">
+<h1><span class="header-section-number">3</span> Counterbalancing
+<em>Speed</em> and <em>Load</em></h1>
+<p>In this final example, we modify the very first example such that
+each subject reads one different texts in each of the six conditions,
+respecting the constraint that design cells are counterbalanced (i.e.,
+each text is read equally often in each condition, each subject reads
+the same number of texts in each condition).</p>
+<p>For this implementation we (1) add a third random factor defined as
+<em>Subj-by-Item</em> and (2) specify factors <em>Speed</em> and
+<em>Load</em> as varying between <em>Subj-by-Item</em>.</p>
 <p>We start with the minimal design of 6 subjects reading 6 texts.</p>
 <p><strong>Design formula:</strong></p>
 <pre><code>Speed(3) x Load(2) x 1 Item[Speed x Load] x 1 Subj[Speed x Load] x 
 (3 x 2) Item-by-Subj[Speed x Load x Item[Speed x Load] + Subj[Speed x Load]] </code></pre>
-<p>We have 1 item and 1 subject nested under the levels of the <em>Speed</em> x <em>Load</em> design. There are 36 instances of the random factor resulting from the multiplication of the random factors <em>Item</em> and <em>Subj</em>. The design generates 3 x 2 x 1 x 1 x (3 x 2) <strong>36 observations</strong>.</p>
-<div class="sourceCode" id="cb42"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb42-1"><a href="#cb42-1"></a>design5 &lt;-<span class="st"> </span></span>
-<span id="cb42-2"><a href="#cb42-2"></a><span class="st">  </span><span class="kw">fixed.factor</span>(<span class="st">&quot;Speed&quot;</span>, <span class="dt">levels=</span><span class="kw">c</span>(<span class="st">&quot;slow&quot;</span>, <span class="st">&quot;medium&quot;</span>, <span class="st">&quot;fast&quot;</span>)) <span class="op">+</span></span>
-<span id="cb42-3"><a href="#cb42-3"></a><span class="st">  </span><span class="kw">fixed.factor</span>(<span class="st">&quot;Load&quot;</span>,  <span class="dt">levels=</span><span class="kw">c</span>(<span class="st">&quot;simple&quot;</span>, <span class="st">&quot;complex&quot;</span>)) <span class="op">+</span></span>
-<span id="cb42-4"><a href="#cb42-4"></a><span class="st">  </span><span class="kw">random.factor</span>(<span class="st">&quot;Subj&quot;</span>, <span class="dt">instances=</span><span class="dv">1</span>) <span class="op">+</span><span class="st"> </span></span>
-<span id="cb42-5"><a href="#cb42-5"></a><span class="st">  </span><span class="kw">random.factor</span>(<span class="st">&quot;Item&quot;</span>, <span class="dt">instances=</span><span class="dv">1</span>) <span class="op">+</span></span>
-<span id="cb42-6"><a href="#cb42-6"></a><span class="st">  </span><span class="kw">random.factor</span>(<span class="kw">c</span>(<span class="st">&quot;Subj&quot;</span>, <span class="st">&quot;Item&quot;</span>), <span class="dt">groups=</span><span class="kw">c</span>(<span class="st">&quot;Speed&quot;</span>, <span class="st">&quot;Load&quot;</span>))</span>
-<span id="cb42-7"><a href="#cb42-7"></a></span>
-<span id="cb42-8"><a href="#cb42-8"></a></span>
-<span id="cb42-9"><a href="#cb42-9"></a>codes5 &lt;-<span class="st"> </span><span class="kw">arrange</span>(<span class="kw">design.codes</span>(design5), Subj, Item)[<span class="kw">c</span>(<span class="dv">3</span>, <span class="dv">4</span>, <span class="dv">1</span>, <span class="dv">2</span>)]</span>
-<span id="cb42-10"><a href="#cb42-10"></a>codes5</span></code></pre></div>
-<pre><code>## # A tibble: 36 x 4
+<p>We have 1 item and 1 subject nested under the levels of the
+<em>Speed</em> x <em>Load</em> design. There are 36 instances of the
+random factor resulting from the multiplication of the random factors
+<em>Item</em> and <em>Subj</em>. The design generates 3 x 2 x 1 x 1 x (3
+x 2) <strong>36 observations</strong>.</p>
+<div class="sourceCode" id="cb42"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb42-1"><a href="#cb42-1" aria-hidden="true" tabindex="-1"></a>design5 <span class="ot">&lt;-</span> </span>
+<span id="cb42-2"><a href="#cb42-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">fixed.factor</span>(<span class="st">&quot;Speed&quot;</span>, <span class="at">levels=</span><span class="fu">c</span>(<span class="st">&quot;slow&quot;</span>, <span class="st">&quot;medium&quot;</span>, <span class="st">&quot;fast&quot;</span>)) <span class="sc">+</span></span>
+<span id="cb42-3"><a href="#cb42-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">fixed.factor</span>(<span class="st">&quot;Load&quot;</span>,  <span class="at">levels=</span><span class="fu">c</span>(<span class="st">&quot;simple&quot;</span>, <span class="st">&quot;complex&quot;</span>)) <span class="sc">+</span></span>
+<span id="cb42-4"><a href="#cb42-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">random.factor</span>(<span class="st">&quot;Subj&quot;</span>, <span class="at">instances=</span><span class="dv">1</span>) <span class="sc">+</span> </span>
+<span id="cb42-5"><a href="#cb42-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">random.factor</span>(<span class="st">&quot;Item&quot;</span>, <span class="at">instances=</span><span class="dv">1</span>) <span class="sc">+</span></span>
+<span id="cb42-6"><a href="#cb42-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">random.factor</span>(<span class="fu">c</span>(<span class="st">&quot;Subj&quot;</span>, <span class="st">&quot;Item&quot;</span>), <span class="at">groups=</span><span class="fu">c</span>(<span class="st">&quot;Speed&quot;</span>, <span class="st">&quot;Load&quot;</span>))</span>
+<span id="cb42-7"><a href="#cb42-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb42-8"><a href="#cb42-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb42-9"><a href="#cb42-9" aria-hidden="true" tabindex="-1"></a>codes5 <span class="ot">&lt;-</span> <span class="fu">arrange</span>(<span class="fu">design.codes</span>(design5), Subj, Item)[<span class="fu">c</span>(<span class="dv">3</span>, <span class="dv">4</span>, <span class="dv">1</span>, <span class="dv">2</span>)]</span>
+<span id="cb42-10"><a href="#cb42-10" aria-hidden="true" tabindex="-1"></a>codes5</span></code></pre></div>
+<pre><code>## # A tibble: 36 × 4
 ##    Speed  Load    Subj  Item 
 ##    &lt;fct&gt;  &lt;fct&gt;   &lt;fct&gt; &lt;fct&gt;
 ##  1 slow   simple  Subj1 Item1
@@ -802,8 +923,8 @@ Type(2) x Speed(3) x 2 Item[Speed] x 6 Subj</code></pre>
 ##  8 medium simple  Subj2 Item2
 ##  9 medium complex Subj2 Item3
 ## 10 fast   simple  Subj2 Item4
-## # … with 26 more rows</code></pre>
-<div class="sourceCode" id="cb44"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb44-1"><a href="#cb44-1"></a><span class="kw">xtabs</span>(<span class="op">~</span><span class="st"> </span>Subj <span class="op">+</span><span class="st"> </span>Speed <span class="op">+</span><span class="st"> </span>Load, codes5)</span></code></pre></div>
+## # ℹ 26 more rows</code></pre>
+<div class="sourceCode" id="cb44"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb44-1"><a href="#cb44-1" aria-hidden="true" tabindex="-1"></a><span class="fu">xtabs</span>(<span class="sc">~</span> Subj <span class="sc">+</span> Speed <span class="sc">+</span> Load, codes5)</span></code></pre></div>
 <pre><code>## , , Load = simple
 ## 
 ##        Speed
@@ -825,7 +946,7 @@ Type(2) x Speed(3) x 2 Item[Speed] x 6 Subj</code></pre>
 ##   Subj4    1      1    1
 ##   Subj5    1      1    1
 ##   Subj6    1      1    1</code></pre>
-<div class="sourceCode" id="cb46"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb46-1"><a href="#cb46-1"></a><span class="kw">xtabs</span>(<span class="op">~</span><span class="st"> </span>Item <span class="op">+</span><span class="st"> </span>Speed <span class="op">+</span><span class="st"> </span>Load, codes5)</span></code></pre></div>
+<div class="sourceCode" id="cb46"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb46-1"><a href="#cb46-1" aria-hidden="true" tabindex="-1"></a><span class="fu">xtabs</span>(<span class="sc">~</span> Item <span class="sc">+</span> Speed <span class="sc">+</span> Load, codes5)</span></code></pre></div>
 <pre><code>## , , Load = simple
 ## 
 ##        Speed
@@ -847,7 +968,7 @@ Type(2) x Speed(3) x 2 Item[Speed] x 6 Subj</code></pre>
 ##   Item4    1      1    1
 ##   Item5    1      1    1
 ##   Item6    1      1    1</code></pre>
-<div class="sourceCode" id="cb48"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb48-1"><a href="#cb48-1"></a><span class="kw">xtabs</span>( <span class="op">~</span><span class="st"> </span>Subj <span class="op">+</span><span class="st"> </span>Item <span class="op">+</span><span class="st"> </span>Load <span class="op">+</span><span class="st"> </span>Speed, codes1)</span></code></pre></div>
+<div class="sourceCode" id="cb48"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb48-1"><a href="#cb48-1" aria-hidden="true" tabindex="-1"></a><span class="fu">xtabs</span>( <span class="sc">~</span> Subj <span class="sc">+</span> Item <span class="sc">+</span> Load <span class="sc">+</span> Speed, codes1)</span></code></pre></div>
 <pre><code>## , , Load = yes, Speed = slow
 ## 
 ##        Item
@@ -913,23 +1034,24 @@ Type(2) x Speed(3) x 2 Item[Speed] x 6 Subj</code></pre>
 ##   Subj4     1     1     1     1     1     1
 ##   Subj5     1     1     1     1     1     1
 ##   Subj6     1     1     1     1     1     1</code></pre>
-<p>Number of subjects and items increase by six with each increment of the value of the <code>instances</code> argument. For example,</p>
+<p>Number of subjects and items increase by six with each increment of
+the value of the <code>instances</code> argument. For example,</p>
 <pre><code>  ...
   random.factor(&quot;Subj&quot;, instances=10) + 
   random.factor(&quot;Item&quot;, instances= 4) +
   ...</code></pre>
 <p>will generate codes for 60 subjects and 24 texts.</p>
-<div class="sourceCode" id="cb51"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb51-1"><a href="#cb51-1"></a>design6 &lt;-<span class="st"> </span></span>
-<span id="cb51-2"><a href="#cb51-2"></a><span class="st">  </span><span class="kw">fixed.factor</span>(<span class="st">&quot;Speed&quot;</span>, <span class="dt">levels=</span><span class="kw">c</span>(<span class="st">&quot;slow&quot;</span>, <span class="st">&quot;medium&quot;</span>, <span class="st">&quot;fast&quot;</span>)) <span class="op">+</span></span>
-<span id="cb51-3"><a href="#cb51-3"></a><span class="st">  </span><span class="kw">fixed.factor</span>(<span class="st">&quot;Load&quot;</span>,  <span class="dt">levels=</span><span class="kw">c</span>(<span class="st">&quot;simple&quot;</span>, <span class="st">&quot;complex&quot;</span>)) <span class="op">+</span></span>
-<span id="cb51-4"><a href="#cb51-4"></a><span class="st">  </span><span class="kw">random.factor</span>(<span class="st">&quot;Subj&quot;</span>, <span class="dt">instances=</span><span class="dv">10</span>) <span class="op">+</span><span class="st"> </span></span>
-<span id="cb51-5"><a href="#cb51-5"></a><span class="st">  </span><span class="kw">random.factor</span>(<span class="st">&quot;Item&quot;</span>, <span class="dt">instances=</span><span class="dv">4</span>) <span class="op">+</span></span>
-<span id="cb51-6"><a href="#cb51-6"></a><span class="st">  </span><span class="kw">random.factor</span>(<span class="kw">c</span>(<span class="st">&quot;Subj&quot;</span>, <span class="st">&quot;Item&quot;</span>), <span class="dt">groups=</span><span class="kw">c</span>(<span class="st">&quot;Speed&quot;</span>, <span class="st">&quot;Load&quot;</span>))</span>
-<span id="cb51-7"><a href="#cb51-7"></a></span>
-<span id="cb51-8"><a href="#cb51-8"></a></span>
-<span id="cb51-9"><a href="#cb51-9"></a>codes6 &lt;-<span class="st"> </span><span class="kw">arrange</span>(<span class="kw">design.codes</span>(design6), Subj, Item)[<span class="kw">c</span>(<span class="dv">3</span>, <span class="dv">4</span>, <span class="dv">1</span>, <span class="dv">2</span>)]</span>
-<span id="cb51-10"><a href="#cb51-10"></a>codes6</span></code></pre></div>
-<pre><code>## # A tibble: 1,440 x 4
+<div class="sourceCode" id="cb51"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb51-1"><a href="#cb51-1" aria-hidden="true" tabindex="-1"></a>design6 <span class="ot">&lt;-</span> </span>
+<span id="cb51-2"><a href="#cb51-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">fixed.factor</span>(<span class="st">&quot;Speed&quot;</span>, <span class="at">levels=</span><span class="fu">c</span>(<span class="st">&quot;slow&quot;</span>, <span class="st">&quot;medium&quot;</span>, <span class="st">&quot;fast&quot;</span>)) <span class="sc">+</span></span>
+<span id="cb51-3"><a href="#cb51-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">fixed.factor</span>(<span class="st">&quot;Load&quot;</span>,  <span class="at">levels=</span><span class="fu">c</span>(<span class="st">&quot;simple&quot;</span>, <span class="st">&quot;complex&quot;</span>)) <span class="sc">+</span></span>
+<span id="cb51-4"><a href="#cb51-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">random.factor</span>(<span class="st">&quot;Subj&quot;</span>, <span class="at">instances=</span><span class="dv">10</span>) <span class="sc">+</span> </span>
+<span id="cb51-5"><a href="#cb51-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">random.factor</span>(<span class="st">&quot;Item&quot;</span>, <span class="at">instances=</span><span class="dv">4</span>) <span class="sc">+</span></span>
+<span id="cb51-6"><a href="#cb51-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">random.factor</span>(<span class="fu">c</span>(<span class="st">&quot;Subj&quot;</span>, <span class="st">&quot;Item&quot;</span>), <span class="at">groups=</span><span class="fu">c</span>(<span class="st">&quot;Speed&quot;</span>, <span class="st">&quot;Load&quot;</span>))</span>
+<span id="cb51-7"><a href="#cb51-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb51-8"><a href="#cb51-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb51-9"><a href="#cb51-9" aria-hidden="true" tabindex="-1"></a>codes6 <span class="ot">&lt;-</span> <span class="fu">arrange</span>(<span class="fu">design.codes</span>(design6), Subj, Item)[<span class="fu">c</span>(<span class="dv">3</span>, <span class="dv">4</span>, <span class="dv">1</span>, <span class="dv">2</span>)]</span>
+<span id="cb51-10"><a href="#cb51-10" aria-hidden="true" tabindex="-1"></a>codes6</span></code></pre></div>
+<pre><code>## # A tibble: 1,440 × 4
 ##    Speed  Load    Subj   Item  
 ##    &lt;fct&gt;  &lt;fct&gt;   &lt;fct&gt;  &lt;fct&gt; 
 ##  1 slow   simple  Subj01 Item01
@@ -942,40 +1064,57 @@ Type(2) x Speed(3) x 2 Item[Speed] x 6 Subj</code></pre>
 ##  8 slow   complex Subj01 Item08
 ##  9 medium simple  Subj01 Item09
 ## 10 medium complex Subj01 Item10
-## # … with 1,430 more rows</code></pre>
-<div class="sourceCode" id="cb53"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb53-1"><a href="#cb53-1"></a><span class="kw">length</span>(<span class="kw">unique</span>(codes6<span class="op">$</span>Subj))</span></code></pre></div>
+## # ℹ 1,430 more rows</code></pre>
+<div class="sourceCode" id="cb53"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb53-1"><a href="#cb53-1" aria-hidden="true" tabindex="-1"></a><span class="fu">length</span>(<span class="fu">unique</span>(codes6<span class="sc">$</span>Subj))</span></code></pre></div>
 <pre><code>## [1] 60</code></pre>
-<div class="sourceCode" id="cb55"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb55-1"><a href="#cb55-1"></a><span class="kw">length</span>(<span class="kw">unique</span>(codes6<span class="op">$</span>Item))</span></code></pre></div>
+<div class="sourceCode" id="cb55"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb55-1"><a href="#cb55-1" aria-hidden="true" tabindex="-1"></a><span class="fu">length</span>(<span class="fu">unique</span>(codes6<span class="sc">$</span>Item))</span></code></pre></div>
 <pre><code>## [1] 24</code></pre>
-<div class="sourceCode" id="cb57"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb57-1"><a href="#cb57-1"></a><span class="kw">length</span>(<span class="kw">unique</span>(<span class="kw">paste</span>(codes6<span class="op">$</span>Subj, codes6<span class="op">$</span>Item)))</span></code></pre></div>
+<div class="sourceCode" id="cb57"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb57-1"><a href="#cb57-1" aria-hidden="true" tabindex="-1"></a><span class="fu">length</span>(<span class="fu">unique</span>(<span class="fu">paste</span>(codes6<span class="sc">$</span>Subj, codes6<span class="sc">$</span>Item)))</span></code></pre></div>
 <pre><code>## [1] 1440</code></pre>
 <p><strong>Design formula:</strong></p>
 <pre><code>Speed(3) x Load(2) x 4 Item[Speed x Load] x 10 Subj[Speed x Load] x 
 (3 x 2) Item-by-Subj[Speed x Load x Item[Speed x Load]  x  Subj[Speed x Load]] </code></pre>
-<p>The total number of items is 4 x 3 x 2 = 24; the total number of subjects is 10 x 3 x 2 = 60. The total number of instances of <em>Item-by-Subj</em> is 3 x 2 x (3 x 2) x 4 x 10 = 1440. The design yields 3 x 2 x 4 x 10 x (3 x 2) = <strong>1440 observations</strong>.</p>
+<p>The total number of items is 4 x 3 x 2 = 24; the total number of
+subjects is 10 x 3 x 2 = 60. The total number of instances of
+<em>Item-by-Subj</em> is 3 x 2 x (3 x 2) x 4 x 10 = 1440. The design
+yields 3 x 2 x 4 x 10 x (3 x 2) = <strong>1440
+observations</strong>.</p>
 </div>
-<div id="outlook" class="section level1">
+<div id="outlook" class="section level1" number="4">
 <h1><span class="header-section-number">4</span> Outlook</h1>
-<p>The examples illustrate some of the basic functionalities. The generalization to a larger number of fixed or random factors and number of levels associated with them should be clear.</p>
-<p>The codes generated with the above specifications can be extended with different assignment of presentation orders according to <code>latin.square</code> (default), <code>random.order</code>, or <code>williams</code>. These options will be described in the second vignette.</p>
-<p>The function also allows the specifations of fixed effects, variance and correlation parameters to generate input suitable for linear (mixed) models and the determination of statistical power via simulations from the model. The third vignette is a tutorial about these functionalities.</p>
+<p>The examples illustrate some of the basic functionalities. The
+generalization to a larger number of fixed or random factors and number
+of levels associated with them should be clear.</p>
+<p>The codes generated with the above specifications can be extended
+with different assignment of presentation orders according to
+<code>latin.square</code> (default), <code>random.order</code>, or
+<code>williams</code>. These options will be described in the second
+vignette.</p>
+<p>The function also allows the specifations of fixed effects, variance
+and correlation parameters to generate input suitable for linear (mixed)
+models and the determination of statistical power via simulations from
+the model. The third vignette is a tutorial about these
+functionalities.</p>
 </div>
-<div id="appendix" class="section level1">
+<div id="appendix" class="section level1" number="5">
 <h1><span class="header-section-number">5</span> Appendix</h1>
-<div id="acknowledgement" class="section level2">
+<div id="acknowledgement" class="section level2" number="5.1">
 <h2><span class="header-section-number">5.1</span> Acknowledgement</h2>
-<p>The development of this package was supported by German Research Foundation (DFG)/SFB 1287 <em>Limits of variability in language</em> and Center for Interdisciplinary Research, Bielefeld (ZiF)/Cooperation Group <em>Statistical models for psychological and linguistic data</em>.</p>
+<p>The development of this package was supported by German Research
+Foundation (DFG)/SFB 1287 <em>Limits of variability in language</em> and
+Center for Interdisciplinary Research, Bielefeld (ZiF)/Cooperation Group
+<em>Statistical models for psychological and linguistic data</em>.</p>
 </div>
-<div id="packages" class="section level2">
+<div id="packages" class="section level2" number="5.2">
 <h2><span class="header-section-number">5.2</span> Packages</h2>
-<div class="sourceCode" id="cb60"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb60-1"><a href="#cb60-1"></a><span class="kw">sessionInfo</span>()</span></code></pre></div>
-<pre><code>## R version 4.0.3 (2020-10-10)
+<div class="sourceCode" id="cb60"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb60-1"><a href="#cb60-1" aria-hidden="true" tabindex="-1"></a><span class="fu">sessionInfo</span>()</span></code></pre></div>
+<pre><code>## R version 4.2.1 (2022-06-23)
 ## Platform: x86_64-apple-darwin17.0 (64-bit)
-## Running under: macOS Catalina 10.15.6
+## Running under: macOS Big Sur ... 10.16
 ## 
 ## Matrix products: default
-## BLAS:   /Library/Frameworks/R.framework/Versions/4.0/Resources/lib/libRblas.dylib
-## LAPACK: /Library/Frameworks/R.framework/Versions/4.0/Resources/lib/libRlapack.dylib
+## BLAS:   /Library/Frameworks/R.framework/Versions/4.2/Resources/lib/libRblas.0.dylib
+## LAPACK: /Library/Frameworks/R.framework/Versions/4.2/Resources/lib/libRlapack.dylib
 ## 
 ## locale:
 ## [1] C/en_US.UTF-8/en_US.UTF-8/C/en_US.UTF-8/en_US.UTF-8
@@ -984,21 +1123,20 @@ Type(2) x Speed(3) x 2 Item[Speed] x 6 Subj</code></pre>
 ## [1] stats     graphics  grDevices utils     datasets  methods   base     
 ## 
 ## other attached packages:
-## [1] designr_0.1.12 dplyr_1.0.4   
+## [1] designr_0.1.13 dplyr_1.1.2   
 ## 
 ## loaded via a namespace (and not attached):
-##  [1] Rcpp_1.0.6        nloptr_1.2.2.2    pillar_1.5.0      bslib_0.2.4      
-##  [5] compiler_4.0.3    jquerylib_0.1.3   tools_4.0.3       boot_1.3-27      
-##  [9] digest_0.6.27     lme4_1.1-26       statmod_1.4.35    nlme_3.1-152     
-## [13] jsonlite_1.7.2    evaluate_0.14     lifecycle_1.0.0   tibble_3.0.6     
-## [17] lattice_0.20-41   pkgconfig_2.0.3   rlang_0.4.10      Matrix_1.3-2     
-## [21] rstudioapi_0.13   cli_2.3.1         DBI_1.1.1         yaml_2.2.1       
-## [25] xfun_0.21         stringr_1.4.0     knitr_1.31        generics_0.1.0   
-## [29] vctrs_0.3.6       sass_0.3.1        grid_4.0.3        tidyselect_1.1.0 
-## [33] glue_1.4.2        R6_2.5.0          fansi_0.4.2       rmarkdown_2.7    
-## [37] minqa_1.2.4       purrr_0.3.4       magrittr_2.0.1    ellipsis_0.3.1   
-## [41] htmltools_0.5.1.1 MASS_7.3-53.1     splines_4.0.3     assertthat_0.2.1 
-## [45] utf8_1.1.4        stringi_1.5.3     crayon_1.4.1</code></pre>
+##  [1] Rcpp_1.0.10      nloptr_2.0.3     pillar_1.9.0     bslib_0.4.2     
+##  [5] compiler_4.2.1   jquerylib_0.1.4  tools_4.2.1      boot_1.3-28.1   
+##  [9] digest_0.6.31    lme4_1.1-33      jsonlite_1.8.4   evaluate_0.20   
+## [13] lifecycle_1.0.3  tibble_3.2.1     nlme_3.1-162     lattice_0.21-8  
+## [17] pkgconfig_2.0.3  rlang_1.1.0      Matrix_1.5-4     cli_3.6.1       
+## [21] rstudioapi_0.14  yaml_2.3.7       xfun_0.39        fastmap_1.1.1   
+## [25] knitr_1.42       generics_0.1.3   vctrs_0.6.2      sass_0.4.5      
+## [29] grid_4.2.1       tidyselect_1.2.0 glue_1.6.2       R6_2.5.1        
+## [33] fansi_1.0.4      rmarkdown_2.21   minqa_1.2.5      magrittr_2.0.3  
+## [37] htmltools_0.5.5  MASS_7.3-59      splines_4.2.1    utf8_1.2.3      
+## [41] cachem_1.0.7</code></pre>
 </div>
 </div>
 
